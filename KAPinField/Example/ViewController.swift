@@ -24,6 +24,7 @@ class ViewController: UIViewController {
         pinField.token = "◉" // Default to "•"
         pinField.numberOfCharacters = 5 // Default to 4
         pinField.validCharacters = "0123456789+#?" // Default to "0123456789"
+        pinField.pinText = "123" // You can set part or all of the pin text
         
         // -- Styling --
         let paragraph = NSMutableParagraphStyle()
@@ -35,7 +36,6 @@ class ViewController: UIViewController {
             .foregroundColor : UIColor.white]
         pinField.defaultTextAttributes = attributes
     }
-
 }
 
 // Mark: - KAPinFieldDelegate
@@ -51,6 +51,9 @@ extension ViewController : KAPinFieldDelegate {
         } else {
             field.animateSuccess(with: "👍") {
                 print("Success")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.pinField.pinText = ""
+                }
             }
         }
     }
