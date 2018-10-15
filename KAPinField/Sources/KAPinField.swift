@@ -37,12 +37,10 @@ class KAPinField : UITextField {
     }
     public var pinDelegate : KAPinFieldDelegate? = nil
     public var pinText : String {
-        get {
-            return invisibleField.text ?? ""
-        }
+        get { return invisibleText }
         set {
-            self.sanitizeText()
-            self.setupUI()
+            self.invisibleField.text = newValue
+            self.refreshUI()
         }
     }
     
@@ -51,6 +49,14 @@ class KAPinField : UITextField {
     // Uses an invisible UITextField to handle text
     // this is necessary for iOS12 .oneTimePassword feature
     private var invisibleField = UITextField()
+    private var invisibleText : String {
+        get {
+            return invisibleField.text ?? ""
+        }
+        set {
+            self.refreshUI()
+        }
+    }
     
     // Mark: - Lifecycle
     
@@ -136,9 +142,9 @@ class KAPinField : UITextField {
         // Display
         var txt = ""
         for i in 0..<numberOfCharacters {
-            if i < pinText.count {
-                let index = pinText.index(txt.startIndex, offsetBy: i)
-                txt += String(pinText[index])
+            if i < invisibleText.count {
+                let index = invisibleText.index(txt.startIndex, offsetBy: i)
+                txt += String(invisibleText[index])
             } else {
                 txt += String(token)
             }
@@ -161,7 +167,7 @@ class KAPinField : UITextField {
     
     // Always position cursor on last valid character
     private func updatePosition() {
-        let offset = min(self.pinText.count, numberOfCharacters)
+        let offset = min(self.invisibleText.count, numberOfCharacters)
         // Only works with a small delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             if let position = self.invisibleField.position(from: self.invisibleField.beginningOfDocument, offset: offset) {
@@ -171,9 +177,9 @@ class KAPinField : UITextField {
     }
     
     func checkCodeValidity() {
-        if self.pinText.count == self.numberOfCharacters {
+        if self.invisibleText.count == self.numberOfCharacters {
             if let pindDelegate = self.pinDelegate {
-                pindDelegate.pinfField(self, didFinishWith: self.pinText)
+                pindDelegate.pinfField(self, didFinishWith: self.invisibleText)
             } else {
                 print("warning : No pinDelegate set for KAPinField")
             }
