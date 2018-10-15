@@ -8,6 +8,6 @@ Pod::Spec.new do |s|
   s.source           = { :git => "https://github.com/kirualex/KAPinField.git", :tag => s.version.to_s }
   s.platform     = :ios, '10.3'
   s.requires_arc = true
-  s.source_files = 'KAPinField/KAPinField.swift'
+  s.source_files = '*/KAPinField.swift'
   s.swift_version = '4.2'
 end
