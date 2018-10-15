@@ -8,7 +8,24 @@
 Lightweight Pin Code Field library for iOS, written in Swift.
 This library also plays well with the all new iOS 12 one time password autofill.
 
-![Preview gif](https://github.com/kirualex/KAPinField/blob/master/preview.gif)
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/kirualex/KAPinField/blob/master/preview1.gif"  width="280"  />
+    </td>
+    <td>
+      <img src="https://github.com/kirualex/KAPinField/blob/master/preview2.gif"  width="280"  />
+    </td>
+  </tr>
+  <tr>
+  <td align=center>
+      Basic use
+    </td>
+    <td align=center>
+      iOS12 autofill
+    </td>
+   </tr>
+ </table>
 
 ## Install
 Using Cocoapods
