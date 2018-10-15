@@ -8,6 +8,8 @@
 Lightweight Pin Code Field library for iOS, written in Swift.
 This library also plays well with the all new iOS 12 one time password autofill.
 
+![Preview gif](https://github.com/kirualex/KAPinField/blob/master/preview.gif)
+
 ## Install
 Using Cocoapods
 `pod 'KAPinField'`
@@ -16,41 +18,41 @@ Using Cocoapods
 ### Delegation
 One simple delegate method called when the pin code is filled
 ```swift
-        protocol KAPinFieldDelegate {
-          func pinfField(_ field: KAPinField, didFinishWith code: String)
-        }
+protocol KAPinFieldDelegate {
+  func pinfField(_ field: KAPinField, didFinishWith code: String)
+}
 ```
 ### Properties
 ```swift
-        pinField.token = "◉" // Default to "•"
-        pinField.numberOfCharacters = 5 // Default to 4
-        pinField.validCharacters = "0123456789+#?" // Default to "0123456789"
-        pinField.pinText = "123" // You can set part or all of the pin text
+pinField.token = "◉" // Default to "•"
+pinField.numberOfCharacters = 5 // Default to 4
+pinField.validCharacters = "0123456789+#?" // Default to "0123456789"
+pinField.pinText = "123" // You can set part or all of the pin text
 ```
 ### Styling
 You can use the native `defaultTextAttributes` to style `KAPinField`.
 It's highly recommended to use one of [iOS monospaced fonts](https://stackoverflow.com/a/22620172/421786) to avoid weird text offset while editting the field.
 ```swift
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.alignment = .center
-        let attributes : [NSAttributedString.Key : Any] = [
-            .paragraphStyle : paragraph,
-            .font : UIFont(name: "Menlo-Regular", size: 40)!,
-            .kern : 14,
-            .foregroundColor : UIColor.white]
-        pinField.defaultTextAttributes = attributes
+let paragraph = NSMutableParagraphStyle()
+paragraph.alignment = .center
+let attributes : [NSAttributedString.Key : Any] = [
+    .paragraphStyle : paragraph,
+    .font : UIFont(name: "Menlo-Regular", size: 40)!,
+    .kern : 14,
+    .foregroundColor : UIColor.white]
+pinField.defaultTextAttributes = attributes
 ```
 ### Animation
 `KAPinField` also provide some eye-candy for failure and success.
 ##### Success
 ```swift
-        field.animateSuccess(with: "👍") {
-            print("Success")
-        }
+field.animateSuccess(with: "👍") {
+    print("Success")
+}
 ```
 ##### Failure
 ```swift
-        field.animateFailure() {
-           print("Failure")
-        }
+field.animateFailure() {
+   print("Failure")
+}
 ```
