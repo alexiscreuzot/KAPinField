@@ -5,7 +5,8 @@
 [![Pod License](http://img.shields.io/cocoapods/l/SDWebImage.svg?style=flat)](https://raw.githubusercontent.com/kirualex/SwiftyGif/master/LICENSE)
 
 # KAPinField
-Lightweight Pin Code Field library for iOS, written in Swift
+Lightweight Pin Code Field library for iOS, written in Swift.
+This library also plays well with the all new iOS 12 one time password autofill.
 
 ## Install
 Using Cocoapods
