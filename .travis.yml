@@ -1,0 +1,9 @@
+language: swift
+osx_image: xcode10
+
+branches:
+ only:
+ - master
+
+script:
+ - xcodebuild build -project KAPinField.xcodeproj -scheme KAPinField -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone X,OS=12' | xcpretty
