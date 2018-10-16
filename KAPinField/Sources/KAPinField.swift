@@ -80,6 +80,7 @@ class KAPinField : UITextField {
         self.invisibleField.textColor = UIColor.black.withAlphaComponent(alpha)
         
         // Prepare `invisibleField`
+        self.invisibleField.text = ""
         self.invisibleField.keyboardType = .numberPad
         self.invisibleField.textAlignment = .center
         if #available(iOS 12.0, *) {
