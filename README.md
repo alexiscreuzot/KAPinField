@@ -5,16 +5,16 @@
 [![Pod License](http://img.shields.io/cocoapods/l/SDWebImage.svg?style=flat)](https://raw.githubusercontent.com/kirualex/SwiftyGif/master/LICENSE)
 
 # KAPinField
-Lightweight Pin Code Field library for iOS, written in Swift.
+Lightweight pin code field library for iOS, written in Swift.
 This library also plays well with the all new iOS 12 one time password autofill.
 
 <table>
   <tr>
     <td>
-      <img src="https://github.com/kirualex/KAPinField/blob/master/preview1.gif"  width="280"  />
+      <img src="https://github.com/kirualex/KAPinField/blob/master/preview1.gif"  width="300"  />
     </td>
     <td>
-      <img src="https://github.com/kirualex/KAPinField/blob/master/preview2.gif"  width="280"  />
+      <img src="https://github.com/kirualex/KAPinField/blob/master/preview2.gif"  width="300"  />
     </td>
   </tr>
   <tr>
@@ -28,24 +28,53 @@ This library also plays well with the all new iOS 12 one time password autofill.
  </table>
 
 ## Install
-Using Cocoapods
+With Cocoapods
 `pod 'KAPinField'`
 
 ## Usage
-### Delegation
-One simple delegate method called when the pin code is filled
 ```swift
-protocol KAPinFieldDelegate {
-  func pinfField(_ field: KAPinField, didFinishWith code: String)
+import KAPinField
+
+class MyController : UIVIewController {
+  ...
 }
+```
+
+### Storyboard
+You can add an UITextField directly in your Storyboard scene and declare it as `KAPinField`. It will automagically become a pin field. You can then customize it from the inspector view to suit your needs.
+
+### Delegation
+Don't forget to set the delegate likeso :
+```swift
+
+@IBOutlet var pinField: KAPinField!
+
+override func viewDidLoad() {
+        super.viewDidLoad()
+        pinField.pinDelegate = self
+        ...
+}
+```
+
+One simple method will be called on your delegate
+```swift
+extension MyController : KAPinFieldDelegate {
+  func pinField(_ field: KAPinField, didFinishWith code: String) {
+    print("didFinishWith : \(code)")
+  }
+}
+```
+
+### Properties
 ```
 ### Properties
 ```swift
-pinField.token = "◉" // Default to "•"
+pinField.token = "△" // Default to "•"
 pinField.numberOfCharacters = 5 // Default to 4
-pinField.validCharacters = "0123456789+#?" // Default to "0123456789"
+pinField.validCharacters = "0123456789+#?" // Default to only numbers, "0123456789"
 pinField.pinText = "123" // You can set part or all of the pin text
 ```
+
 ### Styling
 You can use the native `defaultTextAttributes` to style `KAPinField`.
 It's highly recommended to use one of [iOS monospaced fonts](https://stackoverflow.com/a/22620172/421786) to avoid weird text offset while editting the field.
@@ -59,14 +88,17 @@ let attributes : [NSAttributedString.Key : Any] = [
     .foregroundColor : UIColor.white]
 pinField.defaultTextAttributes = attributes
 ```
+
 ### Animation
 `KAPinField` also provide some eye-candy for failure and success.
+
 ##### Success
 ```swift
 field.animateSuccess(with: "👍") {
     print("Success")
 }
 ```
+
 ##### Failure
 ```swift
 field.animateFailure() {
