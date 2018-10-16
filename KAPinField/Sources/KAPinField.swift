@@ -9,7 +9,7 @@
 import UIKit
 
 protocol KAPinFieldDelegate {
-    func pinfField(_ field: KAPinField, didFinishWith code: String)
+    func pinField(_ field: KAPinField, didFinishWith code: String)
 }
 
 class KAPinField : UITextField {
@@ -99,6 +99,10 @@ class KAPinField : UITextField {
     
     // Mark: - Public functions
     
+    override func becomeFirstResponder() -> Bool {
+        return self.invisibleField.becomeFirstResponder()
+    }
+    
     func animateFailure(_ completion : (() -> Void)? = nil) {
         
         CATransaction.begin()
@@ -179,7 +183,7 @@ class KAPinField : UITextField {
     func checkCodeValidity() {
         if self.invisibleText.count == self.numberOfCharacters {
             if let pindDelegate = self.pinDelegate {
-                pindDelegate.pinfField(self, didFinishWith: self.invisibleText)
+                pindDelegate.pinField(self, didFinishWith: self.invisibleText)
             } else {
                 print("warning : No pinDelegate set for KAPinField")
             }
