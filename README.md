@@ -66,8 +66,6 @@ extension MyController : KAPinFieldDelegate {
 ```
 
 ### Properties
-```
-### Properties
 ```swift
 pinField.token = "△" // Default to "•"
 pinField.numberOfCharacters = 5 // Default to 4
