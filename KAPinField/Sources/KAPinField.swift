@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol KAPinFieldDelegate {
+public protocol KAPinFieldDelegate {
     func pinField(_ field: KAPinField, didFinishWith code: String)
 }
 
-class KAPinField : UITextField {
+public class KAPinField : UITextField {
     
     // Mark: - Public vars
     
@@ -60,12 +60,12 @@ class KAPinField : UITextField {
     
     // Mark: - Lifecycle
     
-    override func awakeFromNib() {
+    override public func awakeFromNib() {
         super.awakeFromNib()
         self.setupUI()
     }
     
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         self.bringSubviewToFront(self.invisibleField)
         self.invisibleField.frame = self.bounds
@@ -103,11 +103,11 @@ class KAPinField : UITextField {
     
     // Mark: - Public functions
     
-    override func becomeFirstResponder() -> Bool {
+    override public func becomeFirstResponder() -> Bool {
         return self.invisibleField.becomeFirstResponder()
     }
     
-    func animateFailure(_ completion : (() -> Void)? = nil) {
+    public func animateFailure(_ completion : (() -> Void)? = nil) {
         
         CATransaction.begin()
         CATransaction.setCompletionBlock({
@@ -125,7 +125,7 @@ class KAPinField : UITextField {
         CATransaction.commit()
     }
     
-    func animateSuccess(with text: String, completion : (() -> Void)? = nil) {
+    public func animateSuccess(with text: String, completion : (() -> Void)? = nil) {
         UIView.animate(withDuration: 0.2, animations: {
             self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
             self.alpha = 0
@@ -174,7 +174,7 @@ class KAPinField : UITextField {
         self.checkCodeValidity()
     }
     
-    func sanitizeText() {
+    private func sanitizeText() {
         var text = self.invisibleField.text ?? ""
         text = String(text.lazy.filter(validCharacters.contains))
         text = String(text.prefix(self.numberOfCharacters))
@@ -192,7 +192,7 @@ class KAPinField : UITextField {
         }
     }
     
-    func checkCodeValidity() {
+    private func checkCodeValidity() {
         if self.invisibleText.count == self.numberOfCharacters {
             if let pindDelegate = self.pinDelegate {
                 pindDelegate.pinField(self, didFinishWith: self.invisibleText)
