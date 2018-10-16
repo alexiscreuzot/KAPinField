@@ -33,7 +33,7 @@ class ViewController: UIViewController {
         let attributes : [NSAttributedString.Key : Any] = [
             .paragraphStyle : paragraph,
             .font : UIFont(name: "Menlo-Regular", size: 40)!,
-            .kern : 14,
+            .kern : 16,
             .foregroundColor : UIColor.white]
         pinField.defaultTextAttributes = attributes
         
@@ -51,7 +51,7 @@ class ViewController: UIViewController {
     
     @IBAction func refreshPinField() {
         let token: Character = ["●", "◉", "◒", "◆", "◼", "△", "▲"].randomElement()!
-        let nbChars = [3,4,5,6].randomElement()!
+        let nbChars = [3,4,5].randomElement()!
         
         pinField.token = token
         pinField.numberOfCharacters = nbChars
