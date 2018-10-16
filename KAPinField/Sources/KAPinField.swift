@@ -95,7 +95,10 @@ class KAPinField : UITextField {
         // Prepare visible field
         self.tintColor = .white // Hide cursor
         
-        self.refreshUI()
+        // Delay fixes kerning offset issue
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            self.refreshUI()
+        }
     }
     
     // Mark: - Public functions
@@ -155,11 +158,19 @@ class KAPinField : UITextField {
             }
         }
         
-        self.text = txt
+        // Fix centering ---
+        // Kerning get added to last character, which causes horizontal offset
+        var attributesWithoutKern = self.defaultTextAttributes
+        attributesWithoutKern[.kern] = 0.0
+        let firstPartText = String(txt.prefix(txt.count - 1))
+        let attString = NSMutableAttributedString(string: firstPartText, attributes: self.defaultTextAttributes)
+        let lastCharString = NSAttributedString(string: String(txt.suffix(1)), attributes: attributesWithoutKern)
+        attString.append(lastCharString)
+        // ---
         
-        self.updatePosition()
+        self.attributedText = attString
         
-        // Check
+        self.updateCursorPosition()
         self.checkCodeValidity()
     }
     
@@ -171,7 +182,7 @@ class KAPinField : UITextField {
     }
     
     // Always position cursor on last valid character
-    private func updatePosition() {
+    private func updateCursorPosition() {
         let offset = min(self.invisibleText.count, numberOfCharacters)
         // Only works with a small delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
