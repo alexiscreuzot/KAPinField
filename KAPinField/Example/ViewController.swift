@@ -10,7 +10,9 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet var targetCodeLabel: UILabel!
     @IBOutlet var pinField: KAPinField!
+    var targetCode = ""
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -19,12 +21,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // -- Public properties --
+        // -- Delegation --
         pinField.pinDelegate = self
-        pinField.token = "◉" // Default to "•"
-        pinField.numberOfCharacters = 5 // Default to 4
-        pinField.validCharacters = "0123456789+#?" // Default to "0123456789"
-        pinField.pinText = "123" // You can set part or all of the pin text
+        
+        // -- Properties --
+        self.refreshPinField()
         
         // -- Styling --
         let paragraph = NSMutableParagraphStyle()
@@ -35,23 +36,44 @@ class ViewController: UIViewController {
             .kern : 14,
             .foregroundColor : UIColor.white]
         pinField.defaultTextAttributes = attributes
+        
+        // Get focus
+        _ = pinField.becomeFirstResponder()
+    }
+    
+    func randomCode(numDigits: Int) -> String {
+        var string = ""
+        for _ in 0..<numDigits {
+            string += String(Int.random(in: 0...9))
+        }
+        return string
+    }
+    
+    @IBAction func refreshPinField() {
+        let token: Character = ["●", "◉", "◒", "◆", "◼", "△", "▲"].randomElement()!
+        let nbChars = [3,4,5,6].randomElement()!
+        
+        pinField.token = token
+        pinField.numberOfCharacters = nbChars
+        targetCode = self.randomCode(numDigits: nbChars)
+        targetCodeLabel.text = "Code : \(targetCode)"
     }
 }
 
 // Mark: - KAPinFieldDelegate
 extension ViewController : KAPinFieldDelegate {
-    func pinfField(_ field: KAPinField, didFinishWith code: String) {
+    func pinField(_ field: KAPinField, didFinishWith code: String) {
         print("didFinishWith : \(code)")
         
         // Randomly show success or failure
-        if Int.random(in: 0...1) == 0 {
+        if code != targetCode {
             field.animateFailure() {
                 print("Failure")
             }
         } else {
             field.animateSuccess(with: "👍") {
                 print("Success")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     self.pinField.pinText = ""
                 }
             }
