@@ -22,20 +22,16 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         // -- Delegation --
-        pinField.pinDelegate = self
+        pinField.ka_delegate = self
         
         // -- Properties --
         self.refreshPinField()
         
         // -- Styling --
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.alignment = .center
-        let attributes : [NSAttributedString.Key : Any] = [
-            .paragraphStyle : paragraph,
-            .font : UIFont(name: "Menlo-Regular", size: 40)!,
-            .kern : 16,
-            .foregroundColor : UIColor.white]
-        pinField.defaultTextAttributes = attributes
+        pinField.ka_tokenColor = UIColor.black.withAlphaComponent(0.3)
+        pinField.ka_textColor = UIColor.white.withAlphaComponent(1.0)
+        pinField.ka_font = KA_MonospacedFont.menlo(40)
+        pinField.ka_kerning = 20
         
         // Get focus
         _ = pinField.becomeFirstResponder()
@@ -50,13 +46,14 @@ class ViewController: UIViewController {
     }
     
     @IBAction func refreshPinField() {
-        let token: Character = ["●", "◉", "◒", "◆", "◼", "△", "▲"].randomElement()!
-        let nbChars = [3,4,5].randomElement()!
+        // Random ka_token and ka_numberOfCharacters
+        pinField.ka_token = ["●", "◉", "—"].randomElement()!
+        pinField.ka_numberOfCharacters = [4, 5].randomElement()!
         
-        pinField.token = token
-        pinField.numberOfCharacters = nbChars
-        targetCode = self.randomCode(numDigits: nbChars)
+        // Random target code
+        targetCode = self.randomCode(numDigits: pinField.ka_numberOfCharacters)
         targetCodeLabel.text = "Code : \(targetCode)"
+        UIPasteboard.general.string = targetCode
     }
 }
 
@@ -71,10 +68,12 @@ extension ViewController : KAPinFieldDelegate {
                 print("Failure")
             }
         } else {
-            field.animateSuccess(with: "👍") {
-                print("Success")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    self.pinField.pinText = ""
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                field.animateSuccess(with: "👍") {
+                    print("Success")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        self.pinField.ka_text = ""
+                    }
                 }
             }
         }
