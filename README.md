@@ -10,10 +10,10 @@ This library also plays well with the all new iOS 12 one time password autofill.
 <table>
   <tr>
     <td>
-      <img src="https://github.com/kirualex/KAPinField/blob/master/preview1.gif"  width="300"  />
+      <img src="https://github.com/kirualex/KAPinField/blob/2.0.0/preview1.gif"  width="300"  />
     </td>
     <td>
-      <img src="https://github.com/kirualex/KAPinField/blob/master/preview2.gif"  width="300"  />
+      <img src="https://github.com/kirualex/KAPinField/blob/2.0.0/preview2.gif"  width="300"  />
     </td>
   </tr>
   <tr>
@@ -50,7 +50,7 @@ Don't forget to set the delegate likeso :
 
 override func viewDidLoad() {
         super.viewDidLoad()
-        pinField.pinDelegate = self
+        pinField.ka_delegate = self
         ...
 }
 ```
@@ -58,47 +58,49 @@ override func viewDidLoad() {
 One simple method will be called on your delegate
 ```swift
 extension MyController : KAPinFieldDelegate {
-  func pinField(_ field: KAPinField, didFinishWith code: String) {
+  func ka_pinField(_ field: KAPinField, didFinishWith code: String) {
     print("didFinishWith : \(code)")
   }
 }
 ```
 
 ### Properties
+All the properties you need for KAPinField are previxed with `ka_`.
+
+##### Logic
 ```swift
-pinField.token = "△" // Default to "•"
-pinField.numberOfCharacters = 5 // Default to 4
-pinField.validCharacters = "0123456789+#?" // Default to only numbers, "0123456789"
-pinField.pinText = "123" // You can set part or all of the pin text
+pinField.ka_token = "-" // Default to "•"
+pinField.ka_numberOfCharacters = 5 // Default to 4
+pinField.ka_validCharacters = "0123456789+#?" // Default to only numbers, "0123456789"
+pinField.ka_text = "123" // You can set part or all of the text
 ```
 
-### Styling
-You can use the native `defaultTextAttributes` to style `KAPinField`.
-It's highly recommended to use one of [iOS monospaced fonts](https://stackoverflow.com/a/22620172/421786) to avoid weird text offset while editting the field.
+##### Styling
 ```swift
-let paragraph = NSMutableParagraphStyle()
-paragraph.alignment = .center
-let attributes : [NSAttributedString.Key : Any] = [
-    .paragraphStyle : paragraph,
-    .font : UIFont(name: "Menlo-Regular", size: 40)!,
-    .kern : 14,
-    .foregroundColor : UIColor.white]
-pinField.defaultTextAttributes = attributes
+pinField.ka_textColor = UIColor.white.withAlphaComponent(1.0) // Default to nib color or black if initialized programmatically.
+pinField.ka_tokenColor = UIColor.black.withAlphaComponent(0.3) // token color, default to text color
+pinField.ka_font = .menloBold(40) // Default to KA_MonospacedFont.menlo(40)
+pinField.ka_kerning = 20 // Space between characters, default to 16
 ```
+
+### Font
+A [monospaced font](https://en.wikipedia.org/wiki/Monospaced_font) is highly recommended in order to avoid horizontal offsetting during typing. For this purpose, a handy helper is available to allow you to access native iOS monospaced fonts.
+To use it, just set `ka_font` with a enum value from `KA_MonospacedFont`.
+You can of course still use your own font by setting the default `font` property on KAPinField.
 
 ### Animation
-`KAPinField` also provide some eye-candy for failure and success.
+`KAPinField` also provide some eye-candy for failure and success. As for properties, those methods are prefixed with `ka_`.
 
 ##### Success
 ```swift
-field.animateSuccess(with: "👍") {
+field.ka_animateSuccess(with: "👍") {
     print("Success")
 }
 ```
 
 ##### Failure
 ```swift
-field.animateFailure() {
+field.ka_animateFailure() {
    print("Failure")
 }
 ```

@@ -37,8 +37,8 @@
                                     <action selector="refreshPinField" destination="BYZ-38-t0r" eventType="touchUpInside" id="6Le-gZ-Rl0"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Code : 1234" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ee6-G1-KAi">
-                                <rect key="frame" x="19" y="196.5" width="337.5" height="17"/>
+                            <label opaque="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Code : 1234" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ee6-G1-KAi">
+                                <rect key="frame" x="19" y="186.5" width="337.5" height="17"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -49,7 +49,7 @@
                             <constraint firstItem="Ee6-G1-KAi" firstAttribute="trailing" secondItem="d8l-Ws-A8U" secondAttribute="trailing" id="8Jf-dg-jsZ"/>
                             <constraint firstItem="deI-wI-pgE" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="8PS-0h-axA"/>
                             <constraint firstItem="deI-wI-pgE" firstAttribute="top" secondItem="d8l-Ws-A8U" secondAttribute="bottom" constant="40" id="VhG-k5-6cP"/>
-                            <constraint firstItem="d8l-Ws-A8U" firstAttribute="top" secondItem="Ee6-G1-KAi" secondAttribute="bottom" constant="20" id="aSq-c9-qmU"/>
+                            <constraint firstItem="d8l-Ws-A8U" firstAttribute="top" secondItem="Ee6-G1-KAi" secondAttribute="bottom" constant="30" id="aSq-c9-qmU"/>
                             <constraint firstItem="Ee6-G1-KAi" firstAttribute="leading" secondItem="d8l-Ws-A8U" secondAttribute="leading" id="azh-6H-ybt"/>
                             <constraint firstItem="d8l-Ws-A8U" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.9" id="bix-rC-xKH"/>
                             <constraint firstItem="d8l-Ws-A8U" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="dsf-dh-p7N"/>

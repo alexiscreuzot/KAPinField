@@ -8,39 +8,68 @@
 
 import UIKit
 
+// Mark: - KAPinFieldDelegate
 public protocol KAPinFieldDelegate {
-    func pinField(_ field: KAPinField, didFinishWith code: String)
+    func ka_pinField(_ field: KAPinField, didFinishWith code: String)
 }
 
+// Mark: - KAPinField Class
 public class KAPinField : UITextField {
     
     // Mark: - Public vars
+    public var ka_delegate : KAPinFieldDelegate? = nil
     
-    public var token: Character = "•" {
+    public var ka_numberOfCharacters: Int = 4 {
         didSet {
-            precondition(!validCharacters.contains(token), "Valid characters can't contain token \"\(token)\"")
+            precondition(ka_numberOfCharacters >= 1, "Number of character must be >= 1")
             self.setupUI()
         }
     }
-    public var numberOfCharacters: Int = 4 {
+    public var ka_validCharacters: String = "0123456789" {
         didSet {
-            precondition(numberOfCharacters >= 1, "Number of character must be >= 1")
+            precondition(ka_validCharacters.count > 0, "There must be at least 1 valid character")
+            precondition(!ka_validCharacters.contains(ka_token), "Valid characters can't contain token \"\(ka_token)\"")
             self.setupUI()
         }
     }
-    public var validCharacters: String = "0123456789" {
-        didSet {
-            precondition(validCharacters.count > 0, "There must be at least 1 valid character")
-            precondition(!validCharacters.contains(token), "Valid characters can't contain token \"\(token)\"")
-            self.setupUI()
-        }
-    }
-    public var pinDelegate : KAPinFieldDelegate? = nil
-    public var pinText : String {
+    public var ka_text : String {
         get { return invisibleText }
         set {
             self.invisibleField.text = newValue
             self.refreshUI()
+        }
+    }
+    public var ka_font : KA_MonospacedFont? = .menlo(40){
+        didSet{
+            self.setupUI()
+        }
+    }
+    public var ka_token: Character = "•" {
+        didSet {
+            precondition(!ka_validCharacters.contains(ka_token), "Valid characters can't contain token \"\(ka_token)\"")
+            self.setupUI()
+        }
+    }
+    public var ka_tokenColor : UIColor? {
+        didSet {
+            self.setupUI()
+        }
+    }
+    public var ka_textColor : UIColor? {
+        didSet {
+            self.setupUI()
+        }
+    }
+    public var ka_kerning : CGFloat = 16.0 {
+        didSet {
+            self.setupUI()
+        }
+    }
+    
+    // Mark: - Overriden vars
+    public override var font: UIFont? {
+        didSet{
+            self.ka_font = nil
         }
     }
     
@@ -93,7 +122,7 @@ public class KAPinField : UITextField {
         self.invisibleField.addTarget(self, action: #selector(refreshUI), for: .editingChanged)
         
         // Prepare visible field
-        self.tintColor = .white // Hide cursor
+        self.tintColor = .clear // Hide cursor
         
         // Delay fixes kerning offset issue
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
@@ -107,7 +136,7 @@ public class KAPinField : UITextField {
         return self.invisibleField.becomeFirstResponder()
     }
     
-    public func animateFailure(_ completion : (() -> Void)? = nil) {
+    public func ka_animateFailure(_ completion : (() -> Void)? = nil) {
         
         CATransaction.begin()
         CATransaction.setCompletionBlock({
@@ -125,7 +154,7 @@ public class KAPinField : UITextField {
         CATransaction.commit()
     }
     
-    public func animateSuccess(with text: String, completion : (() -> Void)? = nil) {
+    public func ka_animateSuccess(with text: String, completion : (() -> Void)? = nil) {
         UIView.animate(withDuration: 0.2, animations: {
             self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
             self.alpha = 0
@@ -147,26 +176,39 @@ public class KAPinField : UITextField {
         
         self.sanitizeText()
         
-        // Display
-        var txt = ""
-        for i in 0..<numberOfCharacters {
-            if i < invisibleText.count {
-                let index = invisibleText.index(txt.startIndex, offsetBy: i)
-                txt += String(invisibleText[index])
-            } else {
-                txt += String(token)
-            }
-        }
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        let font =  self.ka_font?.font() ?? self.font ?? UIFont.preferredFont(forTextStyle: .headline)
+        var attributes: [NSAttributedString.Key : Any] = [ .paragraphStyle : paragraph,
+                                                           .font : font,
+                                                           .kern : self.ka_kerning]
         
-        // Fix centering ---
-        // Kerning get added to last character, which causes horizontal offset
-        var attributesWithoutKern = self.defaultTextAttributes
-        attributesWithoutKern[.kern] = 0.0
-        let firstPartText = String(txt.prefix(txt.count - 1))
-        let attString = NSMutableAttributedString(string: firstPartText, attributes: self.defaultTextAttributes)
-        let lastCharString = NSAttributedString(string: String(txt.suffix(1)), attributes: attributesWithoutKern)
-        attString.append(lastCharString)
-        // ---
+        // Display
+        let attString = NSMutableAttributedString(string: "")
+        for i in 0..<ka_numberOfCharacters {
+            
+            var string = ""
+            if i < invisibleText.count {
+                let index = invisibleText.index(string.startIndex, offsetBy: i)
+                string = String(invisibleText[index])
+            } else {
+                string = String(ka_token)
+            }
+            
+            // Color
+            if string == String(ka_token) {
+                attributes[.foregroundColor] = self.ka_tokenColor
+            } else {
+                attributes[.foregroundColor] = self.ka_textColor
+            }
+            
+            // Fix kerning-centering
+            if i == ka_numberOfCharacters - 1 {
+                attributes[.kern] = 0.0
+            }
+            
+            attString.append(NSAttributedString(string: string, attributes: attributes))
+        }
         
         self.attributedText = attString
         
@@ -176,14 +218,14 @@ public class KAPinField : UITextField {
     
     private func sanitizeText() {
         var text = self.invisibleField.text ?? ""
-        text = String(text.lazy.filter(validCharacters.contains))
-        text = String(text.prefix(self.numberOfCharacters))
+        text = String(text.lazy.filter(ka_validCharacters.contains))
+        text = String(text.prefix(self.ka_numberOfCharacters))
         self.invisibleField.text = text
     }
     
     // Always position cursor on last valid character
     private func updateCursorPosition() {
-        let offset = min(self.invisibleText.count, numberOfCharacters)
+        let offset = min(self.invisibleText.count, ka_numberOfCharacters)
         // Only works with a small delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             if let position = self.invisibleField.position(from: self.invisibleField.beginningOfDocument, offset: offset) {
@@ -193,12 +235,59 @@ public class KAPinField : UITextField {
     }
     
     private func checkCodeValidity() {
-        if self.invisibleText.count == self.numberOfCharacters {
-            if let pindDelegate = self.pinDelegate {
-                pindDelegate.pinField(self, didFinishWith: self.invisibleText)
+        if self.invisibleText.count == self.ka_numberOfCharacters {
+            if let pindDelegate = self.ka_delegate {
+                pindDelegate.ka_pinField(self, didFinishWith: self.invisibleText)
             } else {
                 print("warning : No pinDelegate set for KAPinField")
             }
+        }
+    }
+}
+
+// Mark: - KA_MonospacedFont
+// Helper to provide monospaced fonts via literal
+public enum KA_MonospacedFont {
+    
+    case courier(CGFloat)
+    case courierBold(CGFloat)
+    case courierBoldOblique(CGFloat)
+    case courierOblique(CGFloat)
+    case courierNewBoldItalic(CGFloat)
+    case courierNewBold(CGFloat)
+    case courierNewItalic(CGFloat)
+    case courierNew(CGFloat)
+    case menloBold(CGFloat)
+    case menloBoldItalic(CGFloat)
+    case menloItalic(CGFloat)
+    case menlo(CGFloat)
+    
+    func font() -> UIFont {
+        switch self {
+        case .courier(let size) :
+            return UIFont(name: "Courier", size: size)!
+        case .courierBold(let size) :
+            return UIFont(name: "Courier-Bold", size: size)!
+        case .courierBoldOblique(let size) :
+            return UIFont(name: "Courier-BoldOblique", size: size)!
+        case .courierOblique(let size) :
+            return UIFont(name: "Courier-Oblique", size: size)!
+        case .courierNewBoldItalic(let size) :
+            return UIFont(name: "CourierNewPS-BoldItalicMT", size: size)!
+        case .courierNewBold(let size) :
+            return UIFont(name: "CourierNewPS-BoldMT", size: size)!
+        case .courierNewItalic(let size) :
+            return UIFont(name: "CourierNewPS-ItalicMT", size: size)!
+        case .courierNew(let size) :
+            return UIFont(name: "CourierNewPSMT", size: size)!
+        case .menloBold(let size) :
+            return UIFont(name: "Menlo-Bold", size: size)!
+        case .menloBoldItalic(let size) :
+            return UIFont(name: "Menlo-BoldItalic", size: size)!
+        case .menloItalic(let size) :
+            return UIFont(name: "Menlo-Italic", size: size)!
+        case .menlo(let size) :
+            return UIFont(name: "Menlo-Regular", size: size)!
         }
     }
 }
