@@ -10,7 +10,7 @@ import UIKit
 
 // Mark: - KAPinFieldDelegate
 public protocol KAPinFieldDelegate {
-    func pinField(_ field: KAPinField, didFinishWith code: String)
+    func ka_pinField(_ field: KAPinField, didFinishWith code: String)
 }
 
 // Mark: - KAPinField Class
@@ -39,7 +39,7 @@ public class KAPinField : UITextField {
             self.refreshUI()
         }
     }
-    public var ka_font : KA_MonospacedFont? = KA_MonospacedFont.menlo(40){
+    public var ka_font : KA_MonospacedFont? = .menlo(40){
         didSet{
             self.setupUI()
         }
@@ -136,7 +136,7 @@ public class KAPinField : UITextField {
         return self.invisibleField.becomeFirstResponder()
     }
     
-    public func animateFailure(_ completion : (() -> Void)? = nil) {
+    public func ka_animateFailure(_ completion : (() -> Void)? = nil) {
         
         CATransaction.begin()
         CATransaction.setCompletionBlock({
@@ -154,7 +154,7 @@ public class KAPinField : UITextField {
         CATransaction.commit()
     }
     
-    public func animateSuccess(with text: String, completion : (() -> Void)? = nil) {
+    public func ka_animateSuccess(with text: String, completion : (() -> Void)? = nil) {
         UIView.animate(withDuration: 0.2, animations: {
             self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
             self.alpha = 0
@@ -237,7 +237,7 @@ public class KAPinField : UITextField {
     private func checkCodeValidity() {
         if self.invisibleText.count == self.ka_numberOfCharacters {
             if let pindDelegate = self.ka_delegate {
-                pindDelegate.pinField(self, didFinishWith: self.invisibleText)
+                pindDelegate.ka_pinField(self, didFinishWith: self.invisibleText)
             } else {
                 print("warning : No pinDelegate set for KAPinField")
             }

@@ -30,7 +30,7 @@ class ViewController: UIViewController {
         // -- Styling --
         pinField.ka_tokenColor = UIColor.black.withAlphaComponent(0.3)
         pinField.ka_textColor = UIColor.white.withAlphaComponent(1.0)
-        pinField.ka_font = KA_MonospacedFont.menlo(40)
+        pinField.ka_font = .menlo(40)
         pinField.ka_kerning = 20
         
         // Get focus
@@ -59,17 +59,17 @@ class ViewController: UIViewController {
 
 // Mark: - KAPinFieldDelegate
 extension ViewController : KAPinFieldDelegate {
-    func pinField(_ field: KAPinField, didFinishWith code: String) {
+    func ka_pinField(_ field: KAPinField, didFinishWith code: String) {
         print("didFinishWith : \(code)")
         
         // Randomly show success or failure
         if code != targetCode {
-            field.animateFailure() {
+            field.ka_animateFailure() {
                 print("Failure")
             }
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                field.animateSuccess(with: "👍") {
+                field.ka_animateSuccess(with: "👍") {
                     print("Success")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         self.pinField.ka_text = ""
