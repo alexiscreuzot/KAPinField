@@ -212,7 +212,9 @@ public class KAPinField : UITextField {
         
         self.attributedText = attString
         
-        self.updateCursorPosition()
+        if #available(iOS 11.0, *) {
+            self.updateCursorPosition()
+        }
         self.checkCodeValidity()
     }
     
