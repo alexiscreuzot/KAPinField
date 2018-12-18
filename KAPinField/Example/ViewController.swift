@@ -47,7 +47,7 @@ class ViewController: UIViewController {
     
     @IBAction func refreshPinField() {
         // Random ka_token and ka_numberOfCharacters
-        pinField.ka_token = ["●", "◉", "—"].randomElement()!
+        pinField.ka_token = ["●", "*", "—"].randomElement()!
         pinField.ka_numberOfCharacters = [4, 5].randomElement()!
         
         // Random target code
@@ -72,7 +72,7 @@ extension ViewController : KAPinFieldDelegate {
                 field.ka_animateSuccess(with: "👍") {
                     print("Success")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                        self.pinField.ka_text = ""
+                        self.refreshPinField()
                     }
                 }
             }
