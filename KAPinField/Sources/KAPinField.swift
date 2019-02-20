@@ -19,6 +19,10 @@ public class KAPinField : UITextField {
     // Mark: - Public vars
     public var ka_delegate : KAPinFieldDelegate? = nil
     
+    public var isRTL : Bool {
+        return Locale.characterDirection(forLanguage: Locale.preferredLanguages.first!) == .rightToLeft
+    }
+    
     public var ka_numberOfCharacters: Int = 4 {
         didSet {
             precondition(ka_numberOfCharacters >= 1, "Number of character must be >= 1")
@@ -174,6 +178,11 @@ public class KAPinField : UITextField {
     // Updates textfield content
     @objc private func refreshUI() {
         
+        
+        if (UIPasteboard.general.string == self.invisibleText && isRTL) {
+            self.invisibleField.text = String(self.invisibleText.reversed())
+        }
+        
         self.sanitizeText()
         
         let paragraph = NSMutableParagraphStyle()
@@ -185,7 +194,12 @@ public class KAPinField : UITextField {
         
         // Display
         let attString = NSMutableAttributedString(string: "")
-        for i in 0..<ka_numberOfCharacters {
+        
+        let loopStride = isRTL
+                    ? stride(from: ka_numberOfCharacters-1, to: -1, by: -1)
+                    : stride(from: 0, to: ka_numberOfCharacters, by: 1)
+        
+        for i in loopStride {
             
             var string = ""
             if i < invisibleText.count {
@@ -203,7 +217,8 @@ public class KAPinField : UITextField {
             }
             
             // Fix kerning-centering
-            if i == ka_numberOfCharacters - 1 {
+            let indexForKernFix = isRTL ? 0 : ka_numberOfCharacters-1
+            if i == indexForKernFix {
                 attributes[.kern] = 0.0
             }
             
@@ -239,7 +254,10 @@ public class KAPinField : UITextField {
     private func checkCodeValidity() {
         if self.invisibleText.count == self.ka_numberOfCharacters {
             if let pindDelegate = self.ka_delegate {
-                pindDelegate.ka_pinField(self, didFinishWith: self.invisibleText)
+                
+                let result = isRTL ? String(self.invisibleText.reversed()) : self.invisibleText
+                
+                pindDelegate.ka_pinField(self, didFinishWith: result)
             } else {
                 print("warning : No pinDelegate set for KAPinField")
             }
