@@ -20,7 +20,7 @@ public class KAPinField : UITextField {
     public var ka_delegate : KAPinFieldDelegate? = nil
     
     public var isRTL : Bool {
-        return Locale.characterDirection(forLanguage: Locale.preferredLanguages.first!) == .rightToLeft
+        return UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft
     }
     
     public var ka_numberOfCharacters: Int = 4 {
