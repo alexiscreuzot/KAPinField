@@ -19,7 +19,7 @@ public class KAPinField : UITextField {
     // Mark: - Public vars
     public var ka_delegate : KAPinFieldDelegate? = nil
     
-    public var isRTL : Bool {
+    public var isRightToLeft : Bool {
         return UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft
     }
     
@@ -106,6 +106,11 @@ public class KAPinField : UITextField {
     
     private func setupUI() {
         
+        // Only setup if view showing
+        guard self.superview != nil else {
+            return
+        }
+        
         // Change this for easy debug
         let alpha: CGFloat = 0.0
         self.invisibleField.backgroundColor =  UIColor.white.withAlphaComponent(alpha * 0.8)
@@ -178,8 +183,7 @@ public class KAPinField : UITextField {
     // Updates textfield content
     @objc private func refreshUI() {
         
-        
-        if (UIPasteboard.general.string == self.invisibleText && isRTL) {
+        if (UIPasteboard.general.string == self.invisibleText && isRightToLeft) {
             self.invisibleField.text = String(self.invisibleText.reversed())
         }
         
@@ -194,8 +198,7 @@ public class KAPinField : UITextField {
         
         // Display
         let attString = NSMutableAttributedString(string: "")
-        
-        let loopStride = isRTL
+        let loopStride = isRightToLeft
                     ? stride(from: ka_numberOfCharacters-1, to: -1, by: -1)
                     : stride(from: 0, to: ka_numberOfCharacters, by: 1)
         
@@ -217,7 +220,7 @@ public class KAPinField : UITextField {
             }
             
             // Fix kerning-centering
-            let indexForKernFix = isRTL ? 0 : ka_numberOfCharacters-1
+            let indexForKernFix = isRightToLeft ? 0 : ka_numberOfCharacters-1
             if i == indexForKernFix {
                 attributes[.kern] = 0.0
             }
@@ -255,7 +258,7 @@ public class KAPinField : UITextField {
         if self.invisibleText.count == self.ka_numberOfCharacters {
             if let pindDelegate = self.ka_delegate {
                 
-                let result = isRTL ? String(self.invisibleText.reversed()) : self.invisibleText
+                let result = isRightToLeft ? String(self.invisibleText.reversed()) : self.invisibleText
                 
                 pindDelegate.ka_pinField(self, didFinishWith: result)
             } else {
