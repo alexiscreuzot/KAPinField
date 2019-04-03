@@ -1,4 +1,4 @@
-[![Language](https://img.shields.io/badge/swift-4.2-blue.svg)](http://swift.org)
+[![Language](https://img.shields.io/badge/swift-5.0-blue.svg)](http://swift.org)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/KAPinField.svg)](https://img.shields.io/cocoapods/v/KAPinField.svg)
 [![Build Status](https://travis-ci.org/kirualex/KAPinField.svg?branch=master)](https://travis-ci.org/kirualex/KAPinField)
 [![Pod License](http://img.shields.io/cocoapods/l/SDWebImage.svg?style=flat)](https://raw.githubusercontent.com/kirualex/SwiftyGif/master/LICENSE)

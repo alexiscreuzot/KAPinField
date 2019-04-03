@@ -9,7 +9,7 @@
 import UIKit
 
 // Mark: - KAPinFieldDelegate
-public protocol KAPinFieldDelegate {
+public protocol KAPinFieldDelegate : AnyObject {
     func ka_pinField(_ field: KAPinField, didFinishWith code: String)
 }
 
@@ -17,7 +17,7 @@ public protocol KAPinFieldDelegate {
 public class KAPinField : UITextField {
     
     // Mark: - Public vars
-    public var ka_delegate : KAPinFieldDelegate? = nil
+    public weak var ka_delegate : KAPinFieldDelegate? = nil
     
     public var isRightToLeft : Bool {
         return UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft

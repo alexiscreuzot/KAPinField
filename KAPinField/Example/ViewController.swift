@@ -47,7 +47,8 @@ class ViewController: UIViewController {
     
     @IBAction func refreshPinField() {
         // Random ka_token and ka_numberOfCharacters
-        pinField.ka_token = ["●", "*", "—"].randomElement()!
+        let randomSeparator = ["●", "*", "—"].randomElement()!
+        pinField.ka_token = Character(randomSeparator)
         pinField.ka_numberOfCharacters = [4, 5].randomElement()!
         
         // Random target code
