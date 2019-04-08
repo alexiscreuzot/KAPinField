@@ -64,9 +64,44 @@ public class KAPinField : UITextField {
             self.setupUI()
         }
     }
-    public var ka_kerning : CGFloat = 16.0 {
+    public var ka_kerning : CGFloat = 20.0 {
         didSet {
             self.setupUI()
+        }
+    }
+    public var ka_backColor : UIColor = UIColor.clear {
+        didSet {
+            self.setupUI()
+        }
+    }
+    public var ka_backBorderColor : UIColor = UIColor.clear {
+        didSet {
+            self.setupUI()
+        }
+    }
+    public var ka_backBorderWidth : CGFloat = 1 {
+        didSet {
+            self.setupUI()
+        }
+    }
+    public var ka_backCornerRadius : CGFloat = 4 {
+        didSet {
+            self.setupUI()
+        }
+    }
+    public var ka_backOffset : CGFloat = 4 {
+        didSet {
+            self.setupUI()
+        }
+    }
+    public var ka_backActiveColor : UIColor? {
+        didSet {
+            self.refreshUI()
+        }
+    }
+    public var ka_backBorderActiveColor : UIColor? {
+        didSet {
+            self.refreshUI()
         }
     }
     
@@ -90,6 +125,9 @@ public class KAPinField : UITextField {
             self.refreshUI()
         }
     }
+    private var attributes: [NSAttributedString.Key : Any] = [:]
+    
+    private var backViews = [UIView]()
     
     // Mark: - Lifecycle
     
@@ -102,6 +140,32 @@ public class KAPinField : UITextField {
         super.layoutSubviews()
         self.bringSubviewToFront(self.invisibleField)
         self.invisibleField.frame = self.bounds
+        
+        // back views
+        let myText = self.text ?? ""
+        let nsText = NSString(string: myText)
+        let frame = nsText.boundingRect(with: self.bounds.size,
+                                        options: .usesLineFragmentOrigin,
+                                        attributes: self.attributes,
+                                        context: nil)
+        
+        
+        let actualWidth = frame.width
+            + (self.ka_kerning * CGFloat(self.ka_numberOfCharacters))
+        let digitWidth = actualWidth / CGFloat(self.ka_numberOfCharacters)
+        
+        let offset = (self.bounds.width - actualWidth) / 2
+        
+        for (index, v) in self.backViews.enumerated() {
+            let x = CGFloat(index) * digitWidth + offset
+            var vFrame = CGRect(x: x,
+                                y: 0,
+                                width: digitWidth,
+                                height: frame.height)
+            vFrame.origin.x += self.ka_backOffset / 2
+            vFrame.size.width -= self.ka_backOffset
+            v.frame = vFrame
+        }
     }
     
     private func setupUI() {
@@ -132,6 +196,22 @@ public class KAPinField : UITextField {
         
         // Prepare visible field
         self.tintColor = .clear // Hide cursor
+        
+        // Set back views
+        for v in self.backViews {
+            v.removeFromSuperview()
+        }
+        self.backViews.removeAll(keepingCapacity: false)
+        for _ in 0..<self.ka_numberOfCharacters {
+            let v = UIView()
+            v.backgroundColor = self.ka_backColor
+            v.layer.borderColor = self.ka_backBorderColor.cgColor
+            v.layer.borderWidth = self.ka_backBorderWidth
+            v.layer.cornerRadius = self.ka_backCornerRadius
+            backViews.append(v)
+            self.addSubview(v)
+            self.sendSubviewToBack(v)
+        }
         
         // Delay fixes kerning offset issue
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
@@ -183,6 +263,8 @@ public class KAPinField : UITextField {
     // Updates textfield content
     @objc private func refreshUI() {
         
+        self.sizeToFit()
+        
         if (UIPasteboard.general.string == self.invisibleText && isRightToLeft) {
             self.invisibleField.text = String(self.invisibleText.reversed())
         }
@@ -192,9 +274,9 @@ public class KAPinField : UITextField {
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         let font =  self.ka_font?.font() ?? self.font ?? UIFont.preferredFont(forTextStyle: .headline)
-        var attributes: [NSAttributedString.Key : Any] = [ .paragraphStyle : paragraph,
-                                                           .font : font,
-                                                           .kern : self.ka_kerning]
+        self.attributes = [ .paragraphStyle : paragraph,
+                            .font : font,
+                            .kern : self.ka_kerning]
         
         // Display
         let attString = NSMutableAttributedString(string: "")
@@ -213,10 +295,15 @@ public class KAPinField : UITextField {
             }
             
             // Color
+            let backView = self.backViews[i]
             if string == String(ka_token) {
                 attributes[.foregroundColor] = self.ka_tokenColor
+                backView.backgroundColor = self.ka_backColor
+                backView.layer.borderColor = self.ka_backBorderColor.cgColor
             } else {
                 attributes[.foregroundColor] = self.ka_textColor
+                backView.backgroundColor = self.ka_backActiveColor ?? self.ka_backColor
+                backView.layer.borderColor = self.ka_backBorderActiveColor?.cgColor ?? self.ka_backBorderColor.cgColor
             }
             
             // Fix kerning-centering
@@ -224,6 +311,8 @@ public class KAPinField : UITextField {
             if i == indexForKernFix {
                 attributes[.kern] = 0.0
             }
+            
+            
             
             attString.append(NSAttributedString(string: string, attributes: attributes))
         }
@@ -233,6 +322,7 @@ public class KAPinField : UITextField {
         if #available(iOS 11.0, *) {
             self.updateCursorPosition()
         }
+        
         self.checkCodeValidity()
     }
     

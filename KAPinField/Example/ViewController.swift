@@ -29,7 +29,12 @@ class ViewController: UIViewController {
         
         // -- Styling --
         pinField.ka_tokenColor = UIColor.black.withAlphaComponent(0.3)
-        pinField.ka_textColor = UIColor.white.withAlphaComponent(1.0)
+        pinField.ka_textColor = UIColor.white
+        
+        pinField.ka_backBorderWidth = 2
+        pinField.ka_backBorderColor = UIColor.black.withAlphaComponent(0.15)
+        pinField.ka_backBorderActiveColor = UIColor.white.withAlphaComponent(0.3)
+        
         pinField.ka_font = .menlo(40)
         pinField.ka_kerning = 20
         
