@@ -154,13 +154,13 @@ public class KAPinField : UITextField {
         // back views
         let myText = self.text ?? ""
         let nsText = NSString(string: myText)
-        let frame = nsText.boundingRect(with: self.bounds.size,
+        let textFrame = nsText.boundingRect(with: self.bounds.size,
                                         options: .usesLineFragmentOrigin,
                                         attributes: self.attributes,
                                         context: nil)
         
         
-        let actualWidth = frame.width
+        let actualWidth = textFrame.width
             + (self.ka_kerning * CGFloat(self.ka_numberOfCharacters))
         let digitWidth = actualWidth / CGFloat(self.ka_numberOfCharacters)
         
@@ -169,9 +169,9 @@ public class KAPinField : UITextField {
         for (index, v) in self.backViews.enumerated() {
             let x = CGFloat(index) * digitWidth + offset
             var vFrame = CGRect(x: x,
-                                y: 0,
+                                y: -1,
                                 width: digitWidth,
-                                height: frame.height)
+                                height: self.frame.height)
             vFrame.origin.x += self.ka_backOffset / 2
             vFrame.size.width -= self.ka_backOffset
             v.frame = vFrame
@@ -318,10 +318,8 @@ public class KAPinField : UITextField {
             let backView = self.backViews[backIndex]
             if string == String(ka_token) {
                 attributes[.foregroundColor] = self.ka_tokenColor
-                
                 backView.backgroundColor = self.ka_backColor
                 backView.layer.borderColor = self.ka_backBorderColor.cgColor
-                
             } else {
                 attributes[.foregroundColor] = self.ka_textColor
                 backView.backgroundColor = self.ka_backActiveColor ?? self.ka_backColor
@@ -373,11 +371,9 @@ public class KAPinField : UITextField {
     
     private func checkCodeValidity() {
         if self.invisibleText.count == self.ka_numberOfCharacters {
-            if let pindDelegate = self.ka_delegate {
-                
+            if let pinDelegate = self.ka_delegate {
                 let result = isRightToLeft ? String(self.invisibleText.reversed()) : self.invisibleText
-                
-                pindDelegate.ka_pinField(self, didFinishWith: result)
+                pinDelegate.ka_pinField(self, didFinishWith: result)
             } else {
                 print("warning : No pinDelegate set for KAPinField")
             }
