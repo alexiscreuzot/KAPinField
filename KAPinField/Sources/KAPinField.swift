@@ -303,7 +303,6 @@ public class KAPinField : UITextField {
                     ? stride(from: ka_numberOfCharacters-1, to: -1, by: -1)
                     : stride(from: 0, to: ka_numberOfCharacters, by: 1)
         
-        var shouldFocus = true
         for i in loopStride {
             
             var string = ""
@@ -315,18 +314,13 @@ public class KAPinField : UITextField {
             }
             
             // Color for active / inactive
-            let backView = self.backViews[i]
+            let backIndex = self.isRightToLeft ? self.ka_numberOfCharacters-i-1 : i
+            let backView = self.backViews[backIndex]
             if string == String(ka_token) {
                 attributes[.foregroundColor] = self.ka_tokenColor
                 
-                if shouldFocus {
-                    backView.backgroundColor = self.ka_backFocusColor ?? self.ka_backColor
-                    backView.layer.borderColor = self.ka_backBorderFocusColor?.cgColor ?? self.ka_backBorderColor.cgColor
-                    shouldFocus = false
-                } else {
-                    backView.backgroundColor = self.ka_backColor
-                    backView.layer.borderColor = self.ka_backBorderColor.cgColor
-                }
+                backView.backgroundColor = self.ka_backColor
+                backView.layer.borderColor = self.ka_backBorderColor.cgColor
                 
             } else {
                 attributes[.foregroundColor] = self.ka_textColor
@@ -366,6 +360,13 @@ public class KAPinField : UITextField {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             if let position = self.invisibleField.position(from: self.invisibleField.beginningOfDocument, offset: offset) {
                 self.invisibleField.selectedTextRange = self.textRange(from: position, to: position)
+                
+                var backIndex = self.isRightToLeft ? self.ka_numberOfCharacters-offset-1 : offset
+                backIndex = min(backIndex, self.ka_numberOfCharacters-1)
+                backIndex = max(backIndex, 0)
+                let backView = self.backViews[backIndex]
+                backView.backgroundColor = self.ka_backFocusColor ?? self.ka_backColor
+                backView.layer.borderColor = self.ka_backBorderFocusColor?.cgColor ?? self.ka_backBorderColor.cgColor
             }
         }
     }
