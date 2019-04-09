@@ -10,18 +10,12 @@ This library also plays well with the all new iOS 12 one time password autofill.
 <table>
   <tr>
     <td>
-      <img src="https://github.com/kirualex/KAPinField/blob/2.0.0/preview1.gif"  width="300"  />
-    </td>
-    <td>
-      <img src="https://github.com/kirualex/KAPinField/blob/2.0.0/preview2.gif"  width="300"  />
+      <img src="https://github.com/kirualex/KAPinField/blob/backviews/preview1.gif"  width="360"  />
     </td>
   </tr>
   <tr>
   <td align=center>
-      Basic use
-    </td>
-    <td align=center>
-      iOS12 autofill
+      Example
     </td>
    </tr>
  </table>
