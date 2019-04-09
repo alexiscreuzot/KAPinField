@@ -75,6 +75,17 @@ pinField.ka_textColor = UIColor.white.withAlphaComponent(1.0) // Default to nib 
 pinField.ka_tokenColor = UIColor.black.withAlphaComponent(0.3) // token color, default to text color
 pinField.ka_font = .menloBold(40) // Default to KA_MonospacedFont.menlo(40)
 pinField.ka_kerning = 20 // Space between characters, default to 16
+
+// Back views
+pinField.ka_backOffset = 8
+pinField.ka_backColor = UIColor.clear
+pinField.ka_backBorderWidth = 1
+pinField.ka_backBorderColor = UIColor.white.withAlphaComponent(0.2)
+pinField.ka_backCornerRadius = 4
+pinField.ka_backFocusColor = UIColor.clear
+pinField.ka_backBorderFocusColor = UIColor.white.withAlphaComponent(0.8)
+pinField.ka_backActiveColor = UIColor.clear
+pinField.ka_backBorderActiveColor = UIColor.white
 ```
 
 ### Font
