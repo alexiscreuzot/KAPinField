@@ -28,16 +28,22 @@ class ViewController: UIViewController {
         self.refreshPinField()
         
         // -- Styling --
-        pinField.ka_tokenColor = UIColor.black.withAlphaComponent(0.3)
+        pinField.ka_tokenColor = UIColor.white.withAlphaComponent(0.3)
         pinField.ka_textColor = UIColor.white
-        
-        pinField.ka_backBorderWidth = 2
-        pinField.ka_backBorderColor = UIColor.black.withAlphaComponent(0.15)
-        pinField.ka_backBorderActiveColor = UIColor.white.withAlphaComponent(0.3)
-        
         pinField.ka_font = .menlo(40)
-        pinField.ka_kerning = 20
+        pinField.ka_kerning = 24
         
+        pinField.ka_backOffset = 8
+        pinField.ka_backBorderWidth = 1
+        pinField.ka_backBorderColor = UIColor.white.withAlphaComponent(0.3)
+        pinField.ka_backCornerRadius = 4
+        
+        pinField.ka_backFocusColor = UIColor.clear
+        pinField.ka_backBorderFocusColor = UIColor.white
+        
+        pinField.ka_backActiveColor = UIColor.clear
+        pinField.ka_backBorderActiveColor = UIColor.white
+                
         // Get focus
         _ = pinField.becomeFirstResponder()
     }
@@ -52,7 +58,7 @@ class ViewController: UIViewController {
     
     @IBAction func refreshPinField() {
         // Random ka_token and ka_numberOfCharacters
-        let randomSeparator = ["●", "*", "—"].randomElement()!
+        let randomSeparator = [" ", "*", "—"].randomElement()!
         pinField.ka_token = Character(randomSeparator)
         pinField.ka_numberOfCharacters = [4, 5].randomElement()!
         

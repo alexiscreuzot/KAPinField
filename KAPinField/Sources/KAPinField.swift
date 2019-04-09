@@ -94,6 +94,16 @@ public class KAPinField : UITextField {
             self.setupUI()
         }
     }
+    public var ka_backFocusColor : UIColor? {
+        didSet {
+            self.refreshUI()
+        }
+    }
+    public var ka_backBorderFocusColor : UIColor? {
+        didSet {
+            self.refreshUI()
+        }
+    }
     public var ka_backActiveColor : UIColor? {
         didSet {
             self.refreshUI()
@@ -196,6 +206,7 @@ public class KAPinField : UITextField {
         
         // Prepare visible field
         self.tintColor = .clear // Hide cursor
+        self.contentVerticalAlignment = .center
         
         // Set back views
         for v in self.backViews {
@@ -232,19 +243,22 @@ public class KAPinField : UITextField {
             completion?()
         })
         
-        let animation = CABasicAnimation(keyPath: "position")
-        animation.repeatCount = 3
-        animation.duration = CFTimeInterval(0.2 / animation.repeatCount)
-        animation.autoreverses = true
-        animation.fromValue = NSValue(cgPoint: CGPoint(x: self.center.x - 8, y: self.center.y))
-        animation.toValue = NSValue(cgPoint: CGPoint(x: self.center.x + 8, y: self.center.y))
-        self.layer.add(animation, forKey: "position")
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction.init(name: .linear)
+        animation.duration = 0.6
+        animation.values = [-14.0, 14.0, -14.0, 14.0, -8.0, 8.0, -4.0, 4.0, 0.0 ]
+        layer.add(animation, forKey: "shake")
         
         CATransaction.commit()
     }
     
     public func ka_animateSuccess(with text: String, completion : (() -> Void)? = nil) {
         UIView.animate(withDuration: 0.2, animations: {
+            
+            for v in self.backViews {
+                v.alpha = 0
+            }
+            
             self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
             self.alpha = 0
         }) { _ in
@@ -284,6 +298,7 @@ public class KAPinField : UITextField {
                     ? stride(from: ka_numberOfCharacters-1, to: -1, by: -1)
                     : stride(from: 0, to: ka_numberOfCharacters, by: 1)
         
+        var shouldFocus = true
         for i in loopStride {
             
             var string = ""
@@ -294,12 +309,20 @@ public class KAPinField : UITextField {
                 string = String(ka_token)
             }
             
-            // Color
+            // Color for active / inactive
             let backView = self.backViews[i]
             if string == String(ka_token) {
                 attributes[.foregroundColor] = self.ka_tokenColor
-                backView.backgroundColor = self.ka_backColor
-                backView.layer.borderColor = self.ka_backBorderColor.cgColor
+                
+                if shouldFocus {
+                    backView.backgroundColor = self.ka_backFocusColor ?? self.ka_backColor
+                    backView.layer.borderColor = self.ka_backBorderFocusColor?.cgColor ?? self.ka_backBorderColor.cgColor
+                    shouldFocus = false
+                } else {
+                    backView.backgroundColor = self.ka_backColor
+                    backView.layer.borderColor = self.ka_backBorderColor.cgColor
+                }
+                
             } else {
                 attributes[.foregroundColor] = self.ka_textColor
                 backView.backgroundColor = self.ka_backActiveColor ?? self.ka_backColor
@@ -311,8 +334,6 @@ public class KAPinField : UITextField {
             if i == indexForKernFix {
                 attributes[.kern] = 0.0
             }
-            
-            
             
             attString.append(NSAttributedString(string: string, attributes: attributes))
         }
