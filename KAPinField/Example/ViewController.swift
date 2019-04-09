@@ -33,14 +33,14 @@ class ViewController: UIViewController {
         pinField.ka_font = .menlo(40)
         pinField.ka_kerning = 24
         
+        // Back views
         pinField.ka_backOffset = 8
+        pinField.ka_backColor = UIColor.clear
         pinField.ka_backBorderWidth = 1
         pinField.ka_backBorderColor = UIColor.white.withAlphaComponent(0.3)
         pinField.ka_backCornerRadius = 4
-        
         pinField.ka_backFocusColor = UIColor.clear
         pinField.ka_backBorderFocusColor = UIColor.white
-        
         pinField.ka_backActiveColor = UIColor.clear
         pinField.ka_backBorderActiveColor = UIColor.white
                 

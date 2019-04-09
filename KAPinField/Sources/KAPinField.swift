@@ -266,6 +266,7 @@ public class KAPinField : UITextField {
             UIView.animate(withDuration: 0.2, animations: {
                 self.transform = CGAffineTransform.identity
                 self.alpha = 1.0
+                
             }) { _ in
                 completion?()
             }
@@ -278,6 +279,10 @@ public class KAPinField : UITextField {
     @objc private func refreshUI() {
         
         self.sizeToFit()
+        
+        for v in self.backViews {
+            v.alpha = 1.0
+        }
         
         if (UIPasteboard.general.string == self.invisibleText && isRightToLeft) {
             self.invisibleField.text = String(self.invisibleText.reversed())
