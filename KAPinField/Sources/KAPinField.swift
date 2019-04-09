@@ -201,8 +201,7 @@ public class KAPinField : UITextField {
             self.invisibleField.autocorrectionType = .yes
         }
         self.addSubview(self.invisibleField)
-        self.invisibleField.addTarget(self, action: #selector(refreshUI), for: .allTouchEvents)
-        self.invisibleField.addTarget(self, action: #selector(refreshUI), for: .editingChanged)
+        self.invisibleField.addTarget(self, action: #selector(refreshUI), for: .allEditingEvents)
         
         // Prepare visible field
         self.tintColor = .clear // Hide cursor
@@ -357,8 +356,9 @@ public class KAPinField : UITextField {
         // Only works with a small delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             if let position = self.invisibleField.position(from: self.invisibleField.beginningOfDocument, offset: offset) {
-                self.invisibleField.selectedTextRange = self.textRange(from: position, to: position)
                 
+                self.invisibleField.selectedTextRange = self.textRange(from: position, to: position)
+
                 var backIndex = self.isRightToLeft ? self.ka_numberOfCharacters-offset-1 : offset
                 backIndex = min(backIndex, self.ka_numberOfCharacters-1)
                 backIndex = max(backIndex, 0)
