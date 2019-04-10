@@ -8,11 +8,21 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+enum Style : String, CaseIterable {
+    case blue
+    case light
+    case dark
+}
 
+class ViewController: UIViewController {
+    
+    @IBOutlet var segmentControl: UISegmentedControl!
     @IBOutlet var targetCodeLabel: UILabel!
     @IBOutlet var pinField: KAPinField!
-    var targetCode = ""
+    @IBOutlet var refreshButton: UIButton!
+    
+    private let blueColor = UIColor(red: 24/255, green: 139/255, blue: 245/255, alpha: 1.0)
+    private var targetCode = ""
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -21,29 +31,19 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // -- Delegation --
-        pinField.ka_delegate = self
+        self.segmentControl.removeAllSegments()
+        for (index, style) in Style.allCases.enumerated() {
+            self.segmentControl.insertSegment(withTitle: style.rawValue.capitalized, at: index, animated: false)
+        }
+        self.segmentControl.selectedSegmentIndex = 0
+        
+        // -- Appearance --
+        self.updateStyle()
         
         // -- Properties --
+        pinField.properties.delegate = self
         self.refreshPinField()
         
-        // -- Styling --
-        pinField.ka_tokenColor = UIColor.white.withAlphaComponent(0.2)
-        pinField.ka_textColor = UIColor.white
-        pinField.ka_font = .menlo(40)
-        pinField.ka_kerning = 24
-        
-        // Back views
-        pinField.ka_backOffset = 8
-        pinField.ka_backColor = UIColor.clear
-        pinField.ka_backBorderWidth = 1
-        pinField.ka_backBorderColor = UIColor.white.withAlphaComponent(0.2)
-        pinField.ka_backCornerRadius = 4
-        pinField.ka_backFocusColor = UIColor.clear
-        pinField.ka_backBorderFocusColor = UIColor.white.withAlphaComponent(0.8)
-        pinField.ka_backActiveColor = UIColor.clear
-        pinField.ka_backBorderActiveColor = UIColor.white
-                
         // Get focus
         _ = pinField.becomeFirstResponder()
     }
@@ -57,31 +57,117 @@ class ViewController: UIViewController {
     }
     
     @IBAction func refreshPinField() {
-        // Random ka_token and ka_numberOfCharacters
-        let randomSeparator = [" ", "*", "—", "•"].randomElement()!
-        pinField.ka_token = Character(randomSeparator)
-        pinField.ka_numberOfCharacters = [4, 5].randomElement()!
+        
+        // Random numberOfCharacters
+        pinField.properties.numberOfCharacters = [3, 4, 5].randomElement()!
         
         // Random target code
-        targetCode = self.randomCode(numDigits: pinField.ka_numberOfCharacters)
+        targetCode = self.randomCode(numDigits: pinField.properties.numberOfCharacters)
         targetCodeLabel.text = "Code : \(targetCode)"
         UIPasteboard.general.string = targetCode
+    }
+    
+    @IBAction func updateStyle() {
+        let style = Style.allCases[self.segmentControl.selectedSegmentIndex]
+        UIView.animate(withDuration: 0.3) {
+            self.setStyle(style)
+        }
+    }
+    
+    func setStyle(_ style: Style) {
+        switch style {
+        case .blue:
+            self.view.backgroundColor = self.blueColor
+            self.segmentControl.tintColor = UIColor.white
+            self.targetCodeLabel.textColor = UIColor.white.withAlphaComponent(0.8)
+            
+            pinField.properties.token = "•"
+            
+            pinField.appearance.tokenColor = UIColor.white.withAlphaComponent(0.2)
+            pinField.appearance.tokenFocusColor = UIColor.white
+            pinField.appearance.textColor = UIColor.white
+            pinField.appearance.font = .courier(50)
+            pinField.appearance.kerning = 18
+            pinField.appearance.backOffset = 8
+            pinField.appearance.backColor = UIColor.clear
+            pinField.appearance.backBorderColor = UIColor.clear
+            pinField.appearance.backFocusColor = UIColor.clear
+            pinField.appearance.backBorderFocusColor = UIColor.clear
+            pinField.appearance.backActiveColor = UIColor.clear
+            pinField.appearance.backBorderActiveColor = UIColor.clear
+            
+            self.refreshButton.setTitleColor(UIColor.white, for: .normal)
+            self.refreshButton.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+            break
+        case .light:
+            self.view.backgroundColor = UIColor.white
+            self.segmentControl.tintColor = self.blueColor
+            self.targetCodeLabel.textColor = self.blueColor.withAlphaComponent(0.8)
+            
+            pinField.properties.token = " "
+            
+            pinField.appearance.tokenColor = self.blueColor.withAlphaComponent(0.2)
+            pinField.appearance.tokenFocusColor = self.blueColor.withAlphaComponent(0.2)
+            pinField.appearance.textColor = self.blueColor
+            pinField.appearance.font = .menlo(40)
+            pinField.appearance.kerning = 24
+            pinField.appearance.backOffset = 5
+            pinField.appearance.backColor = UIColor.clear
+            pinField.appearance.backBorderWidth = 1
+            pinField.appearance.backBorderColor = self.blueColor.withAlphaComponent(0.2)
+            pinField.appearance.backCornerRadius = 4
+            pinField.appearance.backFocusColor = UIColor.clear
+            pinField.appearance.backBorderFocusColor = self.blueColor.withAlphaComponent(0.8)
+            pinField.appearance.backActiveColor = UIColor.clear
+            pinField.appearance.backBorderActiveColor = self.blueColor
+            
+            self.refreshButton.setTitleColor(self.blueColor, for: .normal)
+            self.refreshButton.backgroundColor = UIColor.clear
+            break
+        case .dark:
+            self.view.backgroundColor = UIColor.darkText
+            self.segmentControl.tintColor = UIColor.white
+            self.targetCodeLabel.textColor = UIColor.white.withAlphaComponent(0.8)
+            
+            pinField.properties.token = "*"
+            
+            pinField.appearance.tokenColor = UIColor.white.withAlphaComponent(0.2)
+            pinField.appearance.tokenFocusColor = self.blueColor
+            pinField.appearance.textColor = self.blueColor
+            pinField.appearance.font = .menlo(40)
+            pinField.appearance.kerning = 30
+            pinField.appearance.backOffset = 6
+            pinField.appearance.backColor = UIColor.clear
+            pinField.appearance.backBorderWidth = 1
+            pinField.appearance.backBorderColor = UIColor.white.withAlphaComponent(0.2)
+            pinField.appearance.backCornerRadius = 24
+            pinField.appearance.backFocusColor = UIColor.clear
+            pinField.appearance.backBorderFocusColor = self.blueColor.withAlphaComponent(0.8)
+            pinField.appearance.backActiveColor = UIColor.clear
+            pinField.appearance.backBorderActiveColor = self.blueColor
+            
+            self.refreshButton.setTitleColor(UIColor.white, for: .normal)
+            self.refreshButton.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+            break
+        }
+        
+        self.refreshButton.layer.cornerRadius = 5
     }
 }
 
 // Mark: - KAPinFieldDelegate
 extension ViewController : KAPinFieldDelegate {
-    func ka_pinField(_ field: KAPinField, didFinishWith code: String) {
+    func pinField(_ field: KAPinField, didFinishWith code: String) {
         print("didFinishWith : \(code)")
         
         // Randomly show success or failure
         if code != targetCode {
-            field.ka_animateFailure() {
+            field.animateFailure() {
                 print("Failure")
             }
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                field.ka_animateSuccess(with: "👍") {
+                field.animateSuccess(with: "👍") {
                     print("Success")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         self.refreshPinField()

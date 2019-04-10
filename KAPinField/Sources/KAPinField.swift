@@ -10,119 +10,79 @@ import UIKit
 
 // Mark: - KAPinFieldDelegate
 public protocol KAPinFieldDelegate : AnyObject {
-    func ka_pinField(_ field: KAPinField, didFinishWith code: String)
+    func pinField(_ field: KAPinField, didFinishWith code: String)
+}
+
+public struct KAPinFieldProperties {
+    public weak var delegate : KAPinFieldDelegate? = nil
+    public var numberOfCharacters: Int = 4 {
+        didSet {
+            precondition(numberOfCharacters >= 1, "Number of character must be >= 1")
+        }
+    }
+    public var validCharacters: String = "0123456789" {
+        didSet {
+            precondition(validCharacters.count > 0, "There must be at least 1 valid character")
+            precondition(!validCharacters.contains(token), "Valid characters can't contain token \"\(token)\"")
+        }
+    }
+    public var token: Character = "•" {
+        didSet {
+            precondition(!validCharacters.contains(token), "Valid characters can't contain token \"\(token)\"")
+            
+            // Change space to insecable space
+            if token == " " {
+                token = " "
+            }
+        }
+    }
+}
+
+public struct KAPinFieldAppearance {
+    public var font : KA_MonospacedFont? = .menlo(40)
+    public var tokenColor : UIColor?
+    public var tokenFocusColor : UIColor?
+    public var textColor : UIColor?
+    public var kerning : CGFloat = 20.0
+    public var backColor : UIColor = UIColor.clear
+    public var backBorderColor : UIColor = UIColor.clear
+    public var backBorderWidth : CGFloat = 1
+    public var backCornerRadius : CGFloat = 4
+    public var backOffset : CGFloat = 4
+    public var backFocusColor : UIColor?
+    public var backBorderFocusColor : UIColor?
+    public var backActiveColor : UIColor?
+    public var backBorderActiveColor : UIColor?
 }
 
 // Mark: - KAPinField Class
 public class KAPinField : UITextField {
     
     // Mark: - Public vars
-    public weak var ka_delegate : KAPinFieldDelegate? = nil
-    
-    public var isRightToLeft : Bool {
-        return UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft
-    }
-    
-    public var ka_numberOfCharacters: Int = 4 {
+    public var properties = KAPinFieldProperties() {
         didSet {
-            precondition(ka_numberOfCharacters >= 1, "Number of character must be >= 1")
-            self.setupUI()
+            self.reload()
         }
     }
-    public var ka_validCharacters: String = "0123456789" {
+    public var appearance = KAPinFieldAppearance() {
         didSet {
-            precondition(ka_validCharacters.count > 0, "There must be at least 1 valid character")
-            precondition(!ka_validCharacters.contains(ka_token), "Valid characters can't contain token \"\(ka_token)\"")
-            self.setupUI()
+            self.reloadAppearance()
         }
     }
-    public var ka_text : String {
+
+    // Mark: - Overriden vars
+    public override var text : String? {
         get { return invisibleText }
         set {
             self.invisibleField.text = newValue
-            self.refreshUI()
-        }
-    }
-    public var ka_font : KA_MonospacedFont? = .menlo(40){
-        didSet{
-            self.setupUI()
-        }
-    }
-    public var ka_token: Character = "•" {
-        didSet {
-            precondition(!ka_validCharacters.contains(ka_token), "Valid characters can't contain token \"\(ka_token)\"")
-            self.setupUI()
-        }
-    }
-    public var ka_tokenColor : UIColor? {
-        didSet {
-            self.setupUI()
-        }
-    }
-    public var ka_textColor : UIColor? {
-        didSet {
-            self.setupUI()
-        }
-    }
-    public var ka_kerning : CGFloat = 20.0 {
-        didSet {
-            self.setupUI()
-        }
-    }
-    public var ka_backColor : UIColor = UIColor.clear {
-        didSet {
-            self.setupUI()
-        }
-    }
-    public var ka_backBorderColor : UIColor = UIColor.clear {
-        didSet {
-            self.setupUI()
-        }
-    }
-    public var ka_backBorderWidth : CGFloat = 1 {
-        didSet {
-            self.setupUI()
-        }
-    }
-    public var ka_backCornerRadius : CGFloat = 4 {
-        didSet {
-            self.setupUI()
-        }
-    }
-    public var ka_backOffset : CGFloat = 4 {
-        didSet {
-            self.setupUI()
-        }
-    }
-    public var ka_backFocusColor : UIColor? {
-        didSet {
-            self.refreshUI()
-        }
-    }
-    public var ka_backBorderFocusColor : UIColor? {
-        didSet {
-            self.refreshUI()
-        }
-    }
-    public var ka_backActiveColor : UIColor? {
-        didSet {
-            self.refreshUI()
-        }
-    }
-    public var ka_backBorderActiveColor : UIColor? {
-        didSet {
-            self.refreshUI()
-        }
-    }
-    
-    // Mark: - Overriden vars
-    public override var font: UIFont? {
-        didSet{
-            self.ka_font = nil
         }
     }
     
     // Mark: - Private vars
+    
+    private var isRightToLeft : Bool {
+        return UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft
+    }
     
     // Uses an invisible UITextField to handle text
     // this is necessary for iOS12 .oneTimePassword feature
@@ -132,18 +92,18 @@ public class KAPinField : UITextField {
             return invisibleField.text ?? ""
         }
         set {
-            self.refreshUI()
+            self.reloadAppearance()
         }
     }
-    private var attributes: [NSAttributedString.Key : Any] = [:]
     
+    private var attributes: [NSAttributedString.Key : Any] = [:]
     private var backViews = [UIView]()
     
     // Mark: - Lifecycle
     
     override public func awakeFromNib() {
         super.awakeFromNib()
-        self.setupUI()
+        self.reload()
     }
     
     override public func layoutSubviews() {
@@ -152,7 +112,11 @@ public class KAPinField : UITextField {
         self.invisibleField.frame = self.bounds
         
         // back views
-        let myText = self.text ?? ""
+        
+        var myText = ""
+        for _ in 0..<self.properties.numberOfCharacters {
+            myText += "0"
+        }
         let nsText = NSString(string: myText)
         let textFrame = nsText.boundingRect(with: self.bounds.size,
                                         options: .usesLineFragmentOrigin,
@@ -161,8 +125,8 @@ public class KAPinField : UITextField {
         
         
         let actualWidth = textFrame.width
-            + (self.ka_kerning * CGFloat(self.ka_numberOfCharacters))
-        let digitWidth = actualWidth / CGFloat(self.ka_numberOfCharacters)
+            + (self.appearance.kerning * CGFloat(self.properties.numberOfCharacters))
+        let digitWidth = actualWidth / CGFloat(self.properties.numberOfCharacters)
         
         let offset = (self.bounds.width - actualWidth) / 2
         
@@ -172,24 +136,26 @@ public class KAPinField : UITextField {
                                 y: -1,
                                 width: digitWidth,
                                 height: self.frame.height)
-            vFrame.origin.x += self.ka_backOffset / 2
-            vFrame.size.width -= self.ka_backOffset
+            vFrame.origin.x += self.appearance.backOffset / 2
+            vFrame.size.width -= self.appearance.backOffset
             v.frame = vFrame
         }
     }
     
-    private func setupUI() {
+    public func reload() {
         
         // Only setup if view showing
         guard self.superview != nil else {
             return
         }
         
-        // Change this for easy debug
+        // Debugging ---------------
+        // Change alpha for easy debug
         let alpha: CGFloat = 0.0
         self.invisibleField.backgroundColor =  UIColor.white.withAlphaComponent(alpha * 0.8)
         self.invisibleField.tintColor = UIColor.black.withAlphaComponent(alpha)
         self.invisibleField.textColor = UIColor.black.withAlphaComponent(alpha)
+        // --------------------------
         
         // Prepare `invisibleField`
         self.invisibleField.text = ""
@@ -201,7 +167,7 @@ public class KAPinField : UITextField {
             self.invisibleField.autocorrectionType = .yes
         }
         self.addSubview(self.invisibleField)
-        self.invisibleField.addTarget(self, action: #selector(refreshUI), for: .allEditingEvents)
+        self.invisibleField.addTarget(self, action: #selector(reloadAppearance), for: .allEditingEvents)
         
         // Prepare visible field
         self.tintColor = .clear // Hide cursor
@@ -212,12 +178,8 @@ public class KAPinField : UITextField {
             v.removeFromSuperview()
         }
         self.backViews.removeAll(keepingCapacity: false)
-        for _ in 0..<self.ka_numberOfCharacters {
+        for _ in 0..<self.properties.numberOfCharacters {
             let v = UIView()
-            v.backgroundColor = self.ka_backColor
-            v.layer.borderColor = self.ka_backBorderColor.cgColor
-            v.layer.borderWidth = self.ka_backBorderWidth
-            v.layer.cornerRadius = self.ka_backCornerRadius
             backViews.append(v)
             self.addSubview(v)
             self.sendSubviewToBack(v)
@@ -225,7 +187,7 @@ public class KAPinField : UITextField {
         
         // Delay fixes kerning offset issue
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-            self.refreshUI()
+            self.reloadAppearance()
         }
     }
     
@@ -235,7 +197,7 @@ public class KAPinField : UITextField {
         return self.invisibleField.becomeFirstResponder()
     }
     
-    public func ka_animateFailure(_ completion : (() -> Void)? = nil) {
+    public func animateFailure(_ completion : (() -> Void)? = nil) {
         
         CATransaction.begin()
         CATransaction.setCompletionBlock({
@@ -251,7 +213,7 @@ public class KAPinField : UITextField {
         CATransaction.commit()
     }
     
-    public func ka_animateSuccess(with text: String, completion : (() -> Void)? = nil) {
+    public func animateSuccess(with text: String, completion : (() -> Void)? = nil) {
         UIView.animate(withDuration: 0.2, animations: {
             
             for v in self.backViews {
@@ -261,7 +223,7 @@ public class KAPinField : UITextField {
             self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
             self.alpha = 0
         }) { _ in
-            self.text = text
+            self.attributedText = NSAttributedString(string: text, attributes: self.attributes)
             UIView.animate(withDuration: 0.2, animations: {
                 self.transform = CGAffineTransform.identity
                 self.alpha = 1.0
@@ -275,12 +237,17 @@ public class KAPinField : UITextField {
     // Mark: - Private function
     
     // Updates textfield content
-    @objc private func refreshUI() {
+    @objc public func reloadAppearance() {
         
         self.sizeToFit()
         
+        // Styling backviews
         for v in self.backViews {
             v.alpha = 1.0
+            v.backgroundColor = self.appearance.backColor
+            v.layer.borderColor = self.appearance.backBorderColor.cgColor
+            v.layer.borderWidth = self.appearance.backBorderWidth
+            v.layer.cornerRadius = self.appearance.backCornerRadius
         }
         
         if (UIPasteboard.general.string == self.invisibleText && isRightToLeft) {
@@ -291,16 +258,16 @@ public class KAPinField : UITextField {
         
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
-        let font =  self.ka_font?.font() ?? self.font ?? UIFont.preferredFont(forTextStyle: .headline)
+        let font =  self.appearance.font?.font() ?? self.font ?? UIFont.preferredFont(forTextStyle: .headline)
         self.attributes = [ .paragraphStyle : paragraph,
                             .font : font,
-                            .kern : self.ka_kerning]
+                            .kern : self.appearance.kerning]
         
         // Display
         let attString = NSMutableAttributedString(string: "")
         let loopStride = isRightToLeft
-                    ? stride(from: ka_numberOfCharacters-1, to: -1, by: -1)
-                    : stride(from: 0, to: ka_numberOfCharacters, by: 1)
+                    ? stride(from: self.properties.numberOfCharacters-1, to: -1, by: -1)
+                    : stride(from: 0, to: self.properties.numberOfCharacters, by: 1)
         
         for i in loopStride {
             
@@ -309,24 +276,24 @@ public class KAPinField : UITextField {
                 let index = invisibleText.index(string.startIndex, offsetBy: i)
                 string = String(invisibleText[index])
             } else {
-                string = String(ka_token)
+                string = String(self.properties.token)
             }
             
             // Color for active / inactive
-            let backIndex = self.isRightToLeft ? self.ka_numberOfCharacters-i-1 : i
+            let backIndex = self.isRightToLeft ? self.properties.numberOfCharacters-i-1 : i
             let backView = self.backViews[backIndex]
-            if string == String(ka_token) {
-                attributes[.foregroundColor] = self.ka_tokenColor
-                backView.backgroundColor = self.ka_backColor
-                backView.layer.borderColor = self.ka_backBorderColor.cgColor
+            if string == String(self.properties.token) {
+                attributes[.foregroundColor] = self.appearance.tokenColor
+                backView.backgroundColor = self.appearance.backColor
+                backView.layer.borderColor = self.appearance.backBorderColor.cgColor
             } else {
-                attributes[.foregroundColor] = self.ka_textColor
-                backView.backgroundColor = self.ka_backActiveColor ?? self.ka_backColor
-                backView.layer.borderColor = self.ka_backBorderActiveColor?.cgColor ?? self.ka_backBorderColor.cgColor
+                attributes[.foregroundColor] = self.appearance.textColor
+                backView.backgroundColor = self.appearance.backActiveColor ?? self.appearance.backColor
+                backView.layer.borderColor = self.appearance.backBorderActiveColor?.cgColor ?? self.appearance.backBorderColor.cgColor
             }
             
             // Fix kerning-centering
-            let indexForKernFix = isRightToLeft ? 0 : ka_numberOfCharacters-1
+            let indexForKernFix = isRightToLeft ? 0 : self.properties.numberOfCharacters-1
             if i == indexForKernFix {
                 attributes[.kern] = 0.0
             }
@@ -345,39 +312,71 @@ public class KAPinField : UITextField {
     
     private func sanitizeText() {
         var text = self.invisibleField.text ?? ""
-        text = String(text.lazy.filter(ka_validCharacters.contains))
-        text = String(text.prefix(self.ka_numberOfCharacters))
+        text = String(text.lazy.filter(self.properties.validCharacters.contains))
+        text = String(text.prefix(self.properties.numberOfCharacters))
         self.invisibleField.text = text
     }
     
     // Always position cursor on last valid character
     private func updateCursorPosition() {
-        let offset = min(self.invisibleText.count, ka_numberOfCharacters)
+        let offset = min(self.invisibleText.count, self.properties.numberOfCharacters)
         // Only works with a small delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             if let position = self.invisibleField.position(from: self.invisibleField.beginningOfDocument, offset: offset) {
                 
-                self.invisibleField.selectedTextRange = self.textRange(from: position, to: position)
+                
+                let textRange = self.textRange(from: position, to: position)
+                self.invisibleField.selectedTextRange = textRange
 
-                var backIndex = self.isRightToLeft ? self.ka_numberOfCharacters-offset-1 : offset
-                backIndex = min(backIndex, self.ka_numberOfCharacters-1)
+                // Token focus
+                if   let attString = self.attributedText?.mutableCopy() as? NSMutableAttributedString,
+                    var range = self.invisibleField.selectedRange,
+                    range.location >= -1 && range.location < self.properties.numberOfCharacters{
+                    
+                    if self.isRightToLeft {
+                        range.location = self.properties.numberOfCharacters-range.location-1
+                    }
+                    
+                    var atts = attString.attributes(at: range.location, effectiveRange: nil)
+                    atts[.foregroundColor] = self.appearance.tokenFocusColor
+                        ?? self.appearance.tokenColor
+            
+                    range.length = 1
+                    attString.setAttributes(atts, range: range)
+                    self.attributedText = attString
+                }
+                
+                // Backview focus
+                var backIndex = self.isRightToLeft ? self.properties.numberOfCharacters-offset-1 : offset
+                backIndex = min(backIndex, self.properties.numberOfCharacters-1)
                 backIndex = max(backIndex, 0)
                 let backView = self.backViews[backIndex]
-                backView.backgroundColor = self.ka_backFocusColor ?? self.ka_backColor
-                backView.layer.borderColor = self.ka_backBorderFocusColor?.cgColor ?? self.ka_backBorderColor.cgColor
+                backView.backgroundColor = self.appearance.backFocusColor ?? self.appearance.backColor
+                backView.layer.borderColor = self.appearance.backBorderFocusColor?.cgColor ?? self.appearance.backBorderColor.cgColor
             }
         }
     }
     
+ 
+    
     private func checkCodeValidity() {
-        if self.invisibleText.count == self.ka_numberOfCharacters {
-            if let pinDelegate = self.ka_delegate {
+        if self.invisibleText.count == self.properties.numberOfCharacters {
+            if let pinDelegate = self.properties.delegate {
                 let result = isRightToLeft ? String(self.invisibleText.reversed()) : self.invisibleText
-                pinDelegate.ka_pinField(self, didFinishWith: result)
+                pinDelegate.pinField(self, didFinishWith: result)
             } else {
                 print("warning : No pinDelegate set for KAPinField")
             }
         }
+    }
+}
+
+extension UITextInput {
+    var selectedRange: NSRange? {
+        guard let range = selectedTextRange else { return nil }
+        let location = offset(from: beginningOfDocument, to: range.start)
+        let length = offset(from: range.start, to: range.end)
+        return NSRange(location: location, length: length)
     }
 }
 
