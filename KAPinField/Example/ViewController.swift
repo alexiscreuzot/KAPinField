@@ -129,7 +129,7 @@ class ViewController: UIViewController {
             self.segmentControl.tintColor = UIColor.white
             self.targetCodeLabel.textColor = UIColor.white.withAlphaComponent(0.8)
             
-            pinField.properties.token = "*"
+            pinField.properties.token = "-"
             
             pinField.appearance.tokenColor = UIColor.white.withAlphaComponent(0.2)
             pinField.appearance.tokenFocusColor = self.blueColor
@@ -138,7 +138,7 @@ class ViewController: UIViewController {
             pinField.appearance.kerning = 30
             pinField.appearance.backOffset = 6
             pinField.appearance.backColor = UIColor.clear
-            pinField.appearance.backBorderWidth = 1
+            pinField.appearance.backBorderWidth = 2
             pinField.appearance.backBorderColor = UIColor.white.withAlphaComponent(0.2)
             pinField.appearance.backCornerRadius = 24
             pinField.appearance.backFocusColor = UIColor.clear

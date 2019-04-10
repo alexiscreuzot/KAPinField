@@ -44,7 +44,7 @@ Don't forget to set the delegate likeso :
 
 override func viewDidLoad() {
         super.viewDidLoad()
-        pinField.ka_delegate = self
+        pinField.properties.delegate = self
         ...
 }
 ```
@@ -52,60 +52,61 @@ override func viewDidLoad() {
 One simple method will be called on your delegate
 ```swift
 extension MyController : KAPinFieldDelegate {
-  func ka_pinField(_ field: KAPinField, didFinishWith code: String) {
+  func pinField(_ field: KAPinField, didFinishWith code: String) {
     print("didFinishWith : \(code)")
   }
 }
 ```
 
 ### Properties
-All the properties you need for KAPinField are previxed with `ka_`.
+All the logic properties are available in the `KAPinFieldProperties` struct named `properties`.
 
 ##### Logic
 ```swift
-pinField.ka_token = "-" // Default to "•"
-pinField.ka_numberOfCharacters = 5 // Default to 4
-pinField.ka_validCharacters = "0123456789+#?" // Default to only numbers, "0123456789"
-pinField.ka_text = "123" // You can set part or all of the text
+pinField.properties.token = "-" // Default to "•"
+pinField.properties.numberOfCharacters = 5 // Default to 4
+pinField.properties.validCharacters = "0123456789+#?" // Default to only numbers, "0123456789"
+pinField.properties.text = "123" // You can set part or all of the text
 ```
 
 ##### Styling
-```swift
-pinField.ka_textColor = UIColor.white.withAlphaComponent(1.0) // Default to nib color or black if initialized programmatically.
-pinField.ka_tokenColor = UIColor.black.withAlphaComponent(0.3) // token color, default to text color
-pinField.ka_font = .menloBold(40) // Default to KA_MonospacedFont.menlo(40)
-pinField.ka_kerning = 20 // Space between characters, default to 16
+All the styling can be done via the `KAPinFieldAppearance` struct named `appearance`.
 
-// Back views
-pinField.ka_backOffset = 8
-pinField.ka_backColor = UIColor.clear
-pinField.ka_backBorderWidth = 1
-pinField.ka_backBorderColor = UIColor.white.withAlphaComponent(0.2)
-pinField.ka_backCornerRadius = 4
-pinField.ka_backFocusColor = UIColor.clear
-pinField.ka_backBorderFocusColor = UIColor.white.withAlphaComponent(0.8)
-pinField.ka_backActiveColor = UIColor.clear
-pinField.ka_backBorderActiveColor = UIColor.white
+```swift
+pinField.appearance.font = .menloBold(40) // Default to appearance.MonospacedFont.menlo(40)
+pinField.appearance.kerning = 20 // Space between characters, default to 16
+pinField.appearance.textColor = UIColor.white.withAlphaComponent(1.0) // Default to nib color or black if initialized programmatically.
+pinField.appearance.tokenColor = UIColor.black.withAlphaComponent(0.3) // token color, default to text color
+pinField.appearance.tokenFocusColor = UIColor.black.withAlphaComponent(0.3)  // token focus color, default to token color
+pinField.appearance.backOffset = 8 // Backviews spacing between each other
+pinField.appearance.backColor = UIColor.clear
+pinField.appearance.backBorderWidth = 1
+pinField.appearance.backBorderColor = UIColor.white.withAlphaComponent(0.2)
+pinField.appearance.backCornerRadius = 4
+pinField.appearance.backFocusColor = UIColor.clear
+pinField.appearance.backBorderFocusColor = UIColor.white.withAlphaComponent(0.8)
+pinField.appearance.backActiveColor = UIColor.clear
+pinField.appearance.backBorderActiveColor = UIColor.white
 ```
 
 ### Font
 A [monospaced font](https://en.wikipedia.org/wiki/Monospaced_font) is highly recommended in order to avoid horizontal offsetting during typing. For this purpose, a handy helper is available to allow you to access native iOS monospaced fonts.
-To use it, just set `ka_font` with a enum value from `KA_MonospacedFont`.
+To use it, just set `appearance.font` with a enum value from `appearance.MonospacedFont`.
 You can of course still use your own font by setting the default `font` property on KAPinField.
 
 ### Animation
-`KAPinField` also provide some eye-candy for failure and success. As for properties, those methods are prefixed with `ka_`.
+`KAPinField` also provide some eye-candy for failure and success.
 
 ##### Success
 ```swift
-field.ka_animateSuccess(with: "👍") {
+pinfield.animateSuccess(with: "👍") {
     print("Success")
 }
 ```
 
 ##### Failure
 ```swift
-field.ka_animateFailure() {
+pinfield.animateFailure() {
    print("Failure")
 }
 ```
