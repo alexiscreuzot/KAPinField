@@ -77,6 +77,10 @@ public class KAPinField : UITextField {
             self.invisibleField.text = newValue
         }
     }
+
+    public override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        return action == #selector(paste(_:)) // Only allow pasting
+    }
     
     // Mark: - Private vars
     
