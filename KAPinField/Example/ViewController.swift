@@ -59,7 +59,7 @@ class ViewController: UIViewController {
     @IBAction func refreshPinField() {
         
         // Random numberOfCharacters
-        pinField.properties.numberOfCharacters = [3, 4, 5].randomElement()!
+        pinField.properties.numberOfCharacters = [4, 5, 6].randomElement()!
         
         // Random target code
         targetCode = self.randomCode(numDigits: pinField.properties.numberOfCharacters)

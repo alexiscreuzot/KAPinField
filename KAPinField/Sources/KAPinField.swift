@@ -32,7 +32,7 @@ public struct KAPinFieldProperties {
             
             // Change space to insecable space
             if token == " " {
-                token = " "
+                self.token = " "
             }
         }
     }
@@ -328,26 +328,33 @@ public class KAPinField : UITextField {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             if let position = self.invisibleField.position(from: self.invisibleField.beginningOfDocument, offset: offset) {
                 
-                
                 let textRange = self.textRange(from: position, to: position)
                 self.invisibleField.selectedTextRange = textRange
-
+                
                 // Token focus
                 if   let attString = self.attributedText?.mutableCopy() as? NSMutableAttributedString,
-                    var range = self.invisibleField.selectedRange,
-                    range.location >= -1 && range.location < self.properties.numberOfCharacters{
+                     var range = self.invisibleField.selectedRange,
+                    range.location >= -1 && range.location < self.properties.numberOfCharacters {
                     
+                    // Compute range of focused text
                     if self.isRightToLeft {
                         range.location = self.properties.numberOfCharacters-range.location-1
                     }
-                    
-                    var atts = attString.attributes(at: range.location, effectiveRange: nil)
-                    atts[.foregroundColor] = self.appearance.tokenFocusColor
-                        ?? self.appearance.tokenColor
-            
                     range.length = 1
-                    attString.setAttributes(atts, range: range)
-                    self.attributedText = attString
+                    
+                    // Make sure it's a token
+                    // before applying it's foreground color preperty
+                    let string = attString.string
+                    let startIndex = string.index(string.startIndex, offsetBy: range.location)
+                    let endIndex = string.index(startIndex, offsetBy: 1)
+                    let sub = string[startIndex..<endIndex]
+                    if sub == String(self.properties.token) {
+                        var atts = attString.attributes(at: range.location, effectiveRange: nil)
+                        atts[.foregroundColor] = self.appearance.tokenFocusColor
+                            ?? self.appearance.tokenColor
+                        attString.setAttributes(atts, range: range)
+                        self.attributedText = attString
+                    }
                 }
                 
                 // Backview focus
