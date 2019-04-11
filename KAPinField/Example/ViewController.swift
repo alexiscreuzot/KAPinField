@@ -65,6 +65,8 @@ class ViewController: UIViewController {
         targetCode = self.randomCode(numDigits: pinField.properties.numberOfCharacters)
         targetCodeLabel.text = "Code : \(targetCode)"
         UIPasteboard.general.string = targetCode
+        
+        self.updateStyle()
     }
     
     @IBAction func updateStyle() {
@@ -105,6 +107,10 @@ class ViewController: UIViewController {
             self.targetCodeLabel.textColor = self.blueColor.withAlphaComponent(0.8)
             
             pinField.properties.token = " "
+            
+            let startIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 0)
+            let endIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 1)
+            pinField.text = String(self.targetCode[startIndex...endIndex])
             
             pinField.appearance.tokenColor = self.blueColor.withAlphaComponent(0.2)
             pinField.appearance.tokenFocusColor = self.blueColor.withAlphaComponent(0.2)
