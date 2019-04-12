@@ -53,6 +53,7 @@ public struct KAPinFieldAppearance {
     public var backBorderFocusColor : UIColor?
     public var backActiveColor : UIColor?
     public var backBorderActiveColor : UIColor?
+    public var backRounded : Bool = false
 }
 
 // Mark: - KAPinField Class
@@ -142,6 +143,23 @@ public class KAPinField : UITextField {
                                 height: self.frame.height)
             vFrame.origin.x += self.appearance.backOffset / 2
             vFrame.size.width -= self.appearance.backOffset
+            
+            if self.appearance.backRounded {
+                
+                if vFrame.size.height < vFrame.size.width {
+                    let delta = vFrame.size.width - vFrame.size.height
+                    vFrame.origin.x += delta/2
+                } else {
+                    let delta = vFrame.size.height - vFrame.size.width
+                    vFrame.origin.y += delta/2
+                }
+                
+                let minSide = min(vFrame.size.height, vFrame.size.width)
+                vFrame.size.width = minSide
+                vFrame.size.height = minSide
+                v.layer.cornerRadius = minSide/2
+            }
+            
             v.frame = vFrame
         }
     }
@@ -331,10 +349,10 @@ public class KAPinField : UITextField {
                 let textRange = self.textRange(from: position, to: position)
                 self.invisibleField.selectedTextRange = textRange
                 
-                // Token focus
+                // Compute the currently focused element
                 if   let attString = self.attributedText?.mutableCopy() as? NSMutableAttributedString,
                      var range = self.invisibleField.selectedRange,
-                    range.location >= -1 && range.location < self.properties.numberOfCharacters {
+                     range.location >= -1 && range.location < self.properties.numberOfCharacters {
                     
                     // Compute range of focused text
                     if self.isRightToLeft {
@@ -342,28 +360,30 @@ public class KAPinField : UITextField {
                     }
                     range.length = 1
                     
-                    // Make sure it's a token
-                    // before applying it's foreground color preperty
+                    // Make sure it's a token that is focused
                     let string = attString.string
                     let startIndex = string.index(string.startIndex, offsetBy: range.location)
                     let endIndex = string.index(startIndex, offsetBy: 1)
                     let sub = string[startIndex..<endIndex]
                     if sub == String(self.properties.token) {
+                        
+                        // Token focus color
                         var atts = attString.attributes(at: range.location, effectiveRange: nil)
                         atts[.foregroundColor] = self.appearance.tokenFocusColor
                             ?? self.appearance.tokenColor
                         attString.setAttributes(atts, range: range)
                         self.attributedText = attString
+                        
+                        // Backview focus color
+                        var backIndex = self.isRightToLeft ? self.properties.numberOfCharacters-offset-1 : offset
+                        backIndex = min(backIndex, self.properties.numberOfCharacters-1)
+                        backIndex = max(backIndex, 0)
+                        let backView = self.backViews[backIndex]
+                        backView.backgroundColor = self.appearance.backFocusColor ?? self.appearance.backColor
+                        backView.layer.borderColor = self.appearance.backBorderFocusColor?.cgColor ?? self.appearance.backBorderColor.cgColor
+                        
                     }
                 }
-                
-                // Backview focus
-                var backIndex = self.isRightToLeft ? self.properties.numberOfCharacters-offset-1 : offset
-                backIndex = min(backIndex, self.properties.numberOfCharacters-1)
-                backIndex = max(backIndex, 0)
-                let backView = self.backViews[backIndex]
-                backView.backgroundColor = self.appearance.backFocusColor ?? self.appearance.backColor
-                backView.layer.borderColor = self.appearance.backBorderFocusColor?.cgColor ?? self.appearance.backBorderColor.cgColor
             }
         }
     }

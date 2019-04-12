@@ -21,7 +21,7 @@ class ViewController: UIViewController {
     @IBOutlet var pinField: KAPinField!
     @IBOutlet var refreshButton: UIButton!
     
-    private let blueColor = UIColor(red: 24/255, green: 139/255, blue: 245/255, alpha: 1.0)
+    private let blueColor = UIColor(red: 34/255, green: 151/255, blue: 248/255, alpha: 1.0)
     private var targetCode = ""
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -59,7 +59,7 @@ class ViewController: UIViewController {
     @IBAction func refreshPinField() {
         
         // Random numberOfCharacters
-        pinField.properties.numberOfCharacters = [4, 5, 6].randomElement()!
+        pinField.properties.numberOfCharacters = [4, 5].randomElement()!
         
         // Random target code
         targetCode = self.randomCode(numDigits: pinField.properties.numberOfCharacters)
@@ -97,6 +97,7 @@ class ViewController: UIViewController {
             pinField.appearance.backBorderFocusColor = UIColor.clear
             pinField.appearance.backActiveColor = UIColor.clear
             pinField.appearance.backBorderActiveColor = UIColor.clear
+            pinField.appearance.backRounded = false
             
             self.refreshButton.setTitleColor(UIColor.white, for: .normal)
             self.refreshButton.backgroundColor = UIColor.white.withAlphaComponent(0.1)
@@ -106,7 +107,7 @@ class ViewController: UIViewController {
             self.segmentControl.tintColor = self.blueColor
             self.targetCodeLabel.textColor = self.blueColor.withAlphaComponent(0.8)
             
-            pinField.properties.token = " "
+            pinField.properties.token = "-"
             
             let startIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 0)
             let endIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 1)
@@ -126,31 +127,29 @@ class ViewController: UIViewController {
             pinField.appearance.backBorderFocusColor = self.blueColor.withAlphaComponent(0.8)
             pinField.appearance.backActiveColor = UIColor.clear
             pinField.appearance.backBorderActiveColor = self.blueColor
+            pinField.appearance.backRounded = false
             
             self.refreshButton.setTitleColor(self.blueColor, for: .normal)
             self.refreshButton.backgroundColor = UIColor.clear
             break
         case .dark:
-            self.view.backgroundColor = UIColor.darkText
+            self.view.backgroundColor = self.blueColor.withAlphaComponent(0.06)
             self.segmentControl.tintColor = UIColor.white
             self.targetCodeLabel.textColor = UIColor.white.withAlphaComponent(0.8)
             
             pinField.properties.token = "-"
             
-            pinField.appearance.tokenColor = UIColor.white.withAlphaComponent(0.2)
-            pinField.appearance.tokenFocusColor = self.blueColor
-            pinField.appearance.textColor = self.blueColor
+            pinField.appearance.tokenColor = UIColor.clear
+            pinField.appearance.tokenFocusColor = UIColor.clear
+            pinField.appearance.textColor = UIColor.white
             pinField.appearance.font = .menlo(40)
-            pinField.appearance.kerning = 30
-            pinField.appearance.backOffset = 6
-            pinField.appearance.backColor = UIColor.clear
-            pinField.appearance.backBorderWidth = 2
-            pinField.appearance.backBorderColor = UIColor.white.withAlphaComponent(0.2)
-            pinField.appearance.backCornerRadius = 24
-            pinField.appearance.backFocusColor = UIColor.clear
-            pinField.appearance.backBorderFocusColor = self.blueColor.withAlphaComponent(0.8)
-            pinField.appearance.backActiveColor = UIColor.clear
-            pinField.appearance.backBorderActiveColor = self.blueColor
+            pinField.appearance.kerning = 36
+            pinField.appearance.backOffset = 2
+            pinField.appearance.backColor = self.blueColor.withAlphaComponent(0.4)
+            pinField.appearance.backBorderWidth = 0
+            pinField.appearance.backFocusColor = self.blueColor.withAlphaComponent(0.4)
+            pinField.appearance.backActiveColor = self.blueColor
+            pinField.appearance.backRounded = true
             
             self.refreshButton.setTitleColor(UIColor.white, for: .normal)
             self.refreshButton.backgroundColor = UIColor.white.withAlphaComponent(0.1)
