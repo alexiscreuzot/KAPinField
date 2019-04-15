@@ -67,6 +67,9 @@ pinField.properties.token = "-" // Default to "•"
 pinField.properties.numberOfCharacters = 5 // Default to 4
 pinField.properties.validCharacters = "0123456789+#?" // Default to only numbers, "0123456789"
 pinField.properties.text = "123" // You can set part or all of the text
+pinField.properties.animateFocus = true // Animate the currently focused token
+pinField.properties.isSecure = false // Secure pinField will hide actual input
+pinField.properties.secureToken = "*" // Token used to hide actual character input when using isSecure = true
 ```
 
 ##### Styling

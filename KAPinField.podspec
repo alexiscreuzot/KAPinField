@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'KAPinField'
-  s.version          =  '4.1.0'
+  s.version          =  '4.2.0'
   s.summary          = 'Lightweight, highly customizable Pin Code Field library for iOS, written in Swift'
   s.homepage         = 'https://github.com/kirualex/KAPinField'
   s.license          = { :type => "MIT", :file => "LICENSE" }
