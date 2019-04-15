@@ -17,18 +17,18 @@ public struct KAPinFieldProperties {
     public weak var delegate : KAPinFieldDelegate? = nil
     public var numberOfCharacters: Int = 4 {
         didSet {
-            precondition(numberOfCharacters >= 1, "Number of character must be >= 1")
+            precondition(numberOfCharacters >= 1, "🚫 Number of character must be >= 1")
         }
     }
     public var validCharacters: String = "0123456789" {
         didSet {
-            precondition(validCharacters.count > 0, "There must be at least 1 valid character")
-            precondition(!validCharacters.contains(token), "Valid characters can't contain token \"\(token)\"")
+            precondition(validCharacters.count > 0, "🚫 There must be at least 1 valid character")
+            precondition(!validCharacters.contains(token), "🚫 Valid characters can't contain token \"\(token)\"")
         }
     }
     public var token: Character = "•" {
         didSet {
-            precondition(!validCharacters.contains(token), "Valid characters can't contain token \"\(token)\"")
+            precondition(!validCharacters.contains(token), "🚫 token can't be one of the valid characters \"\(token)\"")
             
             // Change space to insecable space
             if token == " " {
@@ -167,7 +167,52 @@ public class KAPinField : UITextField {
         }
     }
     
-    public func reload() {
+    // Mark: - Public functions
+    
+    override public func becomeFirstResponder() -> Bool {
+        return self.invisibleField.becomeFirstResponder()
+    }
+    
+    public func animateFailure(_ completion : (() -> Void)? = nil) {
+        
+        CATransaction.begin()
+        CATransaction.setCompletionBlock({
+            completion?()
+        })
+        
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction.init(name: .linear)
+        animation.duration = 0.6
+        animation.values = [-14.0, 14.0, -14.0, 14.0, -8.0, 8.0, -4.0, 4.0, 0.0 ]
+        layer.add(animation, forKey: "shake")
+        
+        CATransaction.commit()
+    }
+    
+    public func animateSuccess(with text: String, completion : (() -> Void)? = nil) {
+        UIView.animate(withDuration: 0.2, animations: {
+            
+            for v in self.backViews {
+                v.alpha = 0
+            }
+            
+            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.alpha = 0
+        }) { _ in
+            self.attributedText = NSAttributedString(string: text, attributes: self.attributes)
+            UIView.animate(withDuration: 0.2, animations: {
+                self.transform = CGAffineTransform.identity
+                self.alpha = 1.0
+                
+            }) { _ in
+                completion?()
+            }
+        }
+    }
+    
+    // Mark: - Private function
+    
+    private func reload() {
         
         // Only setup if view showing
         guard self.superview != nil else {
@@ -219,7 +264,7 @@ public class KAPinField : UITextField {
         // Focus token animation
         if self.properties.animateFocus {
             if self.timer == nil {
-                self.timer = Timer.scheduledTimer(timeInterval:  0.6, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
+                self.timer = Timer.scheduledTimer(timeInterval:  0.6, target: self, selector: #selector(animateFocusedToken), userInfo: nil, repeats: true)
                 self.timer?.fire()
             }
         } else {
@@ -228,7 +273,7 @@ public class KAPinField : UITextField {
         }
     }
     
-    @objc private func tick() {
+    @objc private func animateFocusedToken() {
         if  let attString = self.attributedText?.mutableCopy() as? NSMutableAttributedString,
             let range = self.currentFocusRange {
             
@@ -246,58 +291,13 @@ public class KAPinField : UITextField {
                 atts[.foregroundColor] = UIColor.clear
             }
             attString.setAttributes(atts, range: range)
-
+            
             UIView.transition(with: self, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
                 self.attributedText = attString
             }, completion: nil)
             
         }
     }
-    
-    // Mark: - Public functions
-    
-    override public func becomeFirstResponder() -> Bool {
-        return self.invisibleField.becomeFirstResponder()
-    }
-    
-    public func animateFailure(_ completion : (() -> Void)? = nil) {
-        
-        CATransaction.begin()
-        CATransaction.setCompletionBlock({
-            completion?()
-        })
-        
-        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
-        animation.timingFunction = CAMediaTimingFunction.init(name: .linear)
-        animation.duration = 0.6
-        animation.values = [-14.0, 14.0, -14.0, 14.0, -8.0, 8.0, -4.0, 4.0, 0.0 ]
-        layer.add(animation, forKey: "shake")
-        
-        CATransaction.commit()
-    }
-    
-    public func animateSuccess(with text: String, completion : (() -> Void)? = nil) {
-        UIView.animate(withDuration: 0.2, animations: {
-            
-            for v in self.backViews {
-                v.alpha = 0
-            }
-            
-            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-            self.alpha = 0
-        }) { _ in
-            self.attributedText = NSAttributedString(string: text, attributes: self.attributes)
-            UIView.animate(withDuration: 0.2, animations: {
-                self.transform = CGAffineTransform.identity
-                self.alpha = 1.0
-                
-            }) { _ in
-                completion?()
-            }
-        }
-    }
-    
-    // Mark: - Private function
     
     // Updates textfield content
     @objc public func reloadAppearance() {
@@ -436,21 +436,19 @@ public class KAPinField : UITextField {
         }
     }
     
- 
-    
     private func checkCodeValidity() {
         if self.invisibleText.count == self.properties.numberOfCharacters {
             if let pinDelegate = self.properties.delegate {
                 let result = isRightToLeft ? String(self.invisibleText.reversed()) : self.invisibleText
                 pinDelegate.pinField(self, didFinishWith: result)
             } else {
-                print("warning : No pinDelegate set for KAPinField")
+                print("⚠️ : No delegate set for KAPinField. Set it via yourPinField.properties.delegate.")
             }
         }
     }
 }
 
-extension UITextInput {
+private extension UITextInput {
     var selectedRange: NSRange? {
         guard let range = selectedTextRange else { return nil }
         let location = offset(from: beginningOfDocument, to: range.start)
