@@ -36,6 +36,7 @@ public struct KAPinFieldProperties {
             }
         }
     }
+    public var animateFocus : Bool = true
 }
 
 public struct KAPinFieldAppearance {
@@ -103,6 +104,8 @@ public class KAPinField : UITextField {
     
     private var attributes: [NSAttributedString.Key : Any] = [:]
     private var backViews = [UIView]()
+    private var timer : Timer?
+    private var currentFocusRange : NSRange?
     
     // Mark: - Lifecycle
     
@@ -193,6 +196,7 @@ public class KAPinField : UITextField {
         
         // Prepare visible field
         self.tintColor = .clear // Hide cursor
+        self.invisibleField.tintColor = .clear // Hide cursor
         self.contentVerticalAlignment = .center
         
         // Set back views
@@ -210,6 +214,43 @@ public class KAPinField : UITextField {
         // Delay fixes kerning offset issue
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             self.reloadAppearance()
+        }
+        
+        // Focus token animation
+        if self.properties.animateFocus {
+            if self.timer == nil {
+                self.timer = Timer.scheduledTimer(timeInterval:  0.6, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
+                self.timer?.fire()
+            }
+        } else {
+            self.timer?.invalidate()
+            self.timer = nil
+        }
+    }
+    
+    @objc private func tick() {
+        if  let attString = self.attributedText?.mutableCopy() as? NSMutableAttributedString,
+            let range = self.currentFocusRange {
+            
+            var atts = attString.attributes(at: range.location, effectiveRange: nil)
+            
+            guard let color = atts[.foregroundColor] as? UIColor else {
+                return
+            }
+            let isClear = (color == .clear)
+            let duration: Double = isClear ? 0.3 : 0.6
+            if isClear{
+                atts[.foregroundColor] = self.appearance.tokenFocusColor
+                    ?? self.appearance.tokenColor
+            } else {
+                atts[.foregroundColor] = UIColor.clear
+            }
+            attString.setAttributes(atts, range: range)
+
+            UIView.transition(with: self, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
+                self.attributedText = attString
+            }, completion: nil)
+            
         }
     }
     
@@ -322,7 +363,7 @@ public class KAPinField : UITextField {
             
             attString.append(NSAttributedString(string: string, attributes: attributes))
         }
-        
+ 
         self.attributedText = attString
         
         if #available(iOS 11.0, *) {
@@ -341,6 +382,7 @@ public class KAPinField : UITextField {
     
     // Always position cursor on last valid character
     private func updateCursorPosition() {
+        self.currentFocusRange = nil
         let offset = min(self.invisibleText.count, self.properties.numberOfCharacters)
         // Only works with a small delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
@@ -372,7 +414,13 @@ public class KAPinField : UITextField {
                         atts[.foregroundColor] = self.appearance.tokenFocusColor
                             ?? self.appearance.tokenColor
                         attString.setAttributes(atts, range: range)
-                        self.attributedText = attString
+                        
+                        // Avoid long fade from tick()
+                        UIView.transition(with: self, duration: 0.1, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
+                            self.attributedText = attString
+                        }, completion: nil)
+                        
+                        self.currentFocusRange = range
                         
                         // Backview focus color
                         var backIndex = self.isRightToLeft ? self.properties.numberOfCharacters-offset-1 : offset

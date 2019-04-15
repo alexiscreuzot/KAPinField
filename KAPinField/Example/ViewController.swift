@@ -84,6 +84,7 @@ class ViewController: UIViewController {
             self.targetCodeLabel.textColor = UIColor.white.withAlphaComponent(0.8)
             
             pinField.properties.token = "•"
+            pinField.properties.animateFocus = true
             
             pinField.appearance.tokenColor = UIColor.white.withAlphaComponent(0.2)
             pinField.appearance.tokenFocusColor = UIColor.white
@@ -107,7 +108,9 @@ class ViewController: UIViewController {
             self.segmentControl.tintColor = self.blueColor
             self.targetCodeLabel.textColor = self.blueColor.withAlphaComponent(0.8)
             
+            
             pinField.properties.token = "-"
+            pinField.properties.animateFocus = false
             
             let startIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 0)
             let endIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 1)
@@ -137,8 +140,6 @@ class ViewController: UIViewController {
             self.segmentControl.tintColor = UIColor.white
             self.targetCodeLabel.textColor = UIColor.white.withAlphaComponent(0.8)
             
-            pinField.properties.token = "-"
-            
             pinField.appearance.tokenColor = UIColor.clear
             pinField.appearance.tokenFocusColor = UIColor.clear
             pinField.appearance.textColor = UIColor.white
@@ -150,6 +151,7 @@ class ViewController: UIViewController {
             pinField.appearance.backFocusColor = self.blueColor.withAlphaComponent(0.4)
             pinField.appearance.backActiveColor = self.blueColor
             pinField.appearance.backRounded = true
+            pinField.tintColor = UIColor.white
             
             self.refreshButton.setTitleColor(UIColor.white, for: .normal)
             self.refreshButton.backgroundColor = UIColor.white.withAlphaComponent(0.1)
