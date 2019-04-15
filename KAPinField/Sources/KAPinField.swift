@@ -338,8 +338,13 @@ public class KAPinField : UITextField {
             
             var string = ""
             if i < invisibleText.count {
-                let index = invisibleText.index(string.startIndex, offsetBy: i)
-                string = String(invisibleText[index])
+                if self.properties.isSecure {
+                    string = String(self.properties.secureToken)
+                } else {
+                    let index = invisibleText.index(string.startIndex, offsetBy: i)
+                    string = String(invisibleText[index])
+                }
+                
             } else {
                 string = String(self.properties.token)
             }
@@ -362,12 +367,7 @@ public class KAPinField : UITextField {
             if i == indexForKernFix {
                 attributes[.kern] = 0.0
             }
-            if self.properties.isSecure {
-                attString.append(NSAttributedString(string: String(self.properties.secureToken), attributes: attributes))
-            } else {
-                attString.append(NSAttributedString(string: string, attributes: attributes))
-            }
-            
+            attString.append(NSAttributedString(string: string, attributes: attributes))
         }
  
         self.attributedText = attString
