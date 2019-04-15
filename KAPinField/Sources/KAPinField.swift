@@ -337,6 +337,7 @@ public class KAPinField : UITextField {
         for i in loopStride {
             
             var string = ""
+            var isToken = false
             if i < invisibleText.count {
                 if self.properties.isSecure {
                     string = String(self.properties.secureToken)
@@ -346,13 +347,14 @@ public class KAPinField : UITextField {
                 }
                 
             } else {
+                isToken = true
                 string = String(self.properties.token)
             }
             
             // Color for active / inactive
             let backIndex = self.isRightToLeft ? self.properties.numberOfCharacters-i-1 : i
             let backView = self.backViews[backIndex]
-            if string == String(self.properties.token) {
+            if isToken {
                 attributes[.foregroundColor] = self.appearance.tokenColor
                 backView.backgroundColor = self.appearance.backColor
                 backView.layer.borderColor = self.appearance.backBorderColor.cgColor
