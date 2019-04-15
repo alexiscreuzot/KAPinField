@@ -37,6 +37,8 @@ public struct KAPinFieldProperties {
         }
     }
     public var animateFocus : Bool = true
+    public var isSecure : Bool = false
+    public var secureToken: Character = "•"
 }
 
 public struct KAPinFieldAppearance {
@@ -79,7 +81,7 @@ public class KAPinField : UITextField {
             self.invisibleField.text = newValue
         }
     }
-
+    
     public override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return action == #selector(paste(_:)) // Only allow pasting
     }
@@ -360,8 +362,12 @@ public class KAPinField : UITextField {
             if i == indexForKernFix {
                 attributes[.kern] = 0.0
             }
+            if self.properties.isSecure {
+                attString.append(NSAttributedString(string: String(self.properties.secureToken), attributes: attributes))
+            } else {
+                attString.append(NSAttributedString(string: string, attributes: attributes))
+            }
             
-            attString.append(NSAttributedString(string: string, attributes: attributes))
         }
  
         self.attributedText = attString
