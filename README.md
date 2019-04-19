@@ -1,5 +1,7 @@
+[![Platform](https://img.shields.io/cocoapods/p/KAPinField.svg?style=flat)](https://alamofire.github.io/KAPinField)
 [![Language](https://img.shields.io/badge/swift-5.0-blue.svg)](http://swift.org)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/KAPinField.svg)](https://img.shields.io/cocoapods/v/KAPinField.svg)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-blue.svg?style=flat)]
 [![Build Status](https://travis-ci.org/kirualex/KAPinField.svg?branch=master)](https://travis-ci.org/kirualex/KAPinField)
 [![Pod License](http://img.shields.io/cocoapods/l/SDWebImage.svg?style=flat)](https://raw.githubusercontent.com/kirualex/SwiftyGif/master/LICENSE)
 
