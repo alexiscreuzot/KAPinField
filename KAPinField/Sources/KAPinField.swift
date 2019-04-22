@@ -111,6 +111,16 @@ public class KAPinField : UITextField {
     
     // Mark: - Lifecycle
     
+    public override var keyboardAppearance: UIKeyboardAppearance {
+        get { return self.invisibleField.keyboardAppearance }
+        set { self.invisibleField.keyboardAppearance = newValue}
+    }
+    
+    public override var keyboardType: UIKeyboardType {
+        get { return self.invisibleField.keyboardType }
+        set { self.invisibleField.keyboardType = newValue}
+    }
+    
     override public func awakeFromNib() {
         super.awakeFromNib()
         self.reload()

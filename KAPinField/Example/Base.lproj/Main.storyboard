@@ -77,7 +77,7 @@
                                 </constraints>
                                 <color key="textColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad" textContentType="one-time-code"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad" keyboardAppearance="alert" textContentType="one-time-code"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="deI-wI-pgE">
                                 <rect key="frame" x="119" y="386" width="137" height="40"/>
@@ -97,7 +97,7 @@
                             </label>
                             <view contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9IR-i8-vqo">
                                 <rect key="frame" x="0.0" y="597" width="375" height="215"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="215" id="wxz-dS-kPf"/>
                                 </constraints>
@@ -121,6 +121,7 @@
                             <constraint firstItem="9IR-i8-vqo" firstAttribute="top" relation="greaterThanOrEqual" secondItem="deI-wI-pgE" secondAttribute="bottom" constant="20" id="nJY-Ap-CGt"/>
                             <constraint firstAttribute="trailing" secondItem="9IR-i8-vqo" secondAttribute="trailing" id="ySX-iQ-pni"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="aDb-oH-ANJ"/>
                     </view>
                     <connections>
                         <outlet property="keyboardheightConstraint" destination="wxz-dS-kPf" id="pmR-ko-f9C"/>
