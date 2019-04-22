@@ -17,9 +17,13 @@ enum Style : String, CaseIterable {
 class ViewController: UIViewController {
     
     @IBOutlet var segmentControl: UISegmentedControl!
+    @IBOutlet var secureSwitch: UISwitch!
+    @IBOutlet var secureLabel: UILabel!
     @IBOutlet var targetCodeLabel: UILabel!
     @IBOutlet var pinField: KAPinField!
     @IBOutlet var refreshButton: UIButton!
+    
+    @IBOutlet var keyboardheightConstraint: NSLayoutConstraint!
     
     private let blueColor = UIColor(red: 34/255, green: 151/255, blue: 248/255, alpha: 1.0)
     private var targetCode = ""
@@ -31,11 +35,18 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardDidShow),
+                                               name: UIResponder.keyboardDidShowNotification,
+                                               object: nil)
+        
         self.segmentControl.removeAllSegments()
         for (index, style) in Style.allCases.enumerated() {
             self.segmentControl.insertSegment(withTitle: style.rawValue.capitalized, at: index, animated: false)
         }
         self.segmentControl.selectedSegmentIndex = 0
+        
+        self.secureSwitch.addTarget(self, action: #selector(updateStyle), for: .valueChanged)
         
         // -- Appearance --
         self.updateStyle()
@@ -46,6 +57,17 @@ class ViewController: UIViewController {
         
         // Get focus
         _ = pinField.becomeFirstResponder()
+    }
+    
+    @objc func keyboardDidShow(notification: Notification) {
+        guard let info = notification.userInfo else { return }
+        guard let frameInfo = info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardFrame = frameInfo.cgRectValue
+        
+        self.keyboardheightConstraint.constant = keyboardFrame.height
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
     
     func randomCode(numDigits: Int) -> String {
@@ -69,7 +91,7 @@ class ViewController: UIViewController {
         self.updateStyle()
     }
     
-    @IBAction func updateStyle() {
+    @objc @IBAction func updateStyle() {
         let style = Style.allCases[self.segmentControl.selectedSegmentIndex]
         UIView.animate(withDuration: 0.3) {
             self.setStyle(style)
@@ -77,10 +99,12 @@ class ViewController: UIViewController {
     }
     
     func setStyle(_ style: Style) {
+        
+        pinField.properties.isSecure = self.secureSwitch.isOn
+        
         switch style {
         case .blue:
             self.view.backgroundColor = self.blueColor
-            self.segmentControl.tintColor = UIColor.white
             self.targetCodeLabel.textColor = UIColor.white.withAlphaComponent(0.8)
             
             pinField.properties.token = "•"
@@ -105,9 +129,7 @@ class ViewController: UIViewController {
             break
         case .light:
             self.view.backgroundColor = UIColor.white
-            self.segmentControl.tintColor = self.blueColor
             self.targetCodeLabel.textColor = self.blueColor.withAlphaComponent(0.8)
-            
             
             pinField.properties.token = "-"
             pinField.properties.animateFocus = false
@@ -136,8 +158,7 @@ class ViewController: UIViewController {
             self.refreshButton.backgroundColor = UIColor.clear
             break
         case .dark:
-            self.view.backgroundColor = self.blueColor.withAlphaComponent(0.06)
-            self.segmentControl.tintColor = UIColor.white
+            self.view.backgroundColor = UIColor.black
             self.targetCodeLabel.textColor = UIColor.white.withAlphaComponent(0.8)
             
             pinField.appearance.tokenColor = UIColor.clear
