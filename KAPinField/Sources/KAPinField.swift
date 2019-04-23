@@ -10,7 +10,12 @@ import UIKit
 
 // Mark: - KAPinFieldDelegate
 public protocol KAPinFieldDelegate : AnyObject {
+    func pinField(_ field: KAPinField, didInput character: Character, isValid: Bool) // Optional
     func pinField(_ field: KAPinField, didFinishWith code: String)
+}
+
+public extension KAPinFieldDelegate {
+    func pinField(_ field: KAPinField, didInput character: Character, isValid: Bool) {}
 }
 
 public struct KAPinFieldProperties {
@@ -100,7 +105,7 @@ public class KAPinField : UITextField {
             return invisibleField.text ?? ""
         }
         set {
-            self.reloadAppearance()
+            self.reloadAppearance()  
         }
     }
     
@@ -240,9 +245,11 @@ public class KAPinField : UITextField {
         // --------------------------
         
         // Prepare `invisibleField`
-        self.invisibleField.text = ""
-        self.invisibleField.keyboardType = .numberPad
         self.invisibleField.textAlignment = .center
+        self.invisibleField.autocapitalizationType = .none
+        self.invisibleField.autocorrectionType = .no
+        self.invisibleField.spellCheckingType = .no
+        
         if #available(iOS 12.0, *) {
             // Show possible prediction on iOS >= 12
             self.invisibleField.textContentType = .oneTimeCode
@@ -393,6 +400,12 @@ public class KAPinField : UITextField {
     
     private func sanitizeText() {
         var text = self.invisibleField.text ?? ""
+        
+        if let char = text.last {
+            let isValid = self.properties.validCharacters.contains(char)
+            self.properties.delegate?.pinField(self, didInput: char, isValid: isValid)
+        }
+        
         text = String(text.lazy.filter(self.properties.validCharacters.contains))
         text = String(text.prefix(self.properties.numberOfCharacters))
         self.invisibleField.text = text

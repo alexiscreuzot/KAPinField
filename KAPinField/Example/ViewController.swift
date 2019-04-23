@@ -185,18 +185,27 @@ class ViewController: UIViewController {
 
 // Mark: - KAPinFieldDelegate
 extension ViewController : KAPinFieldDelegate {
+    
+    func pinField(_ field: KAPinField, didInput character: Character, isValid: Bool) {
+        if isValid {
+            print("didInput valid character: \(character) ")
+        } else {
+            print("didInput invalid character : \(character) ")
+            self.pinField.animateFailure()
+        }
+    }
+    
     func pinField(_ field: KAPinField, didFinishWith code: String) {
         print("didFinishWith : \(code)")
         
         // Randomly show success or failure
         if code != targetCode {
-            field.animateFailure() {
-                print("Failure")
-            }
+            print("Failure")
+            field.animateFailure()
         } else {
+            print("Success")
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                 field.animateSuccess(with: "👍") {
-                    print("Success")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         self.refreshPinField()
                     }
