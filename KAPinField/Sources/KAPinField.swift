@@ -83,11 +83,9 @@ public class KAPinField : UITextField {
     public override var text : String? {
         get { return invisibleText }
         set {
-            
-            guard  !self.isAnimating else {
+            guard !self.isAnimating else {
                 return
             }
-            
             self.invisibleField.text = newValue
         }
     }
@@ -200,12 +198,16 @@ public class KAPinField : UITextField {
     
     public func animateFailure(_ completion : (() -> Void)? = nil) {
         
+        guard !self.isAnimating else {
+            return
+        }
+        
         isAnimating = true
         
         CATransaction.begin()
         CATransaction.setCompletionBlock({
-            completion?()
             self.isAnimating = false
+            completion?()
         })
         
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
@@ -240,8 +242,12 @@ public class KAPinField : UITextField {
                 self.alpha = 1.0
                 
             }) { _ in
-                completion?()
-                self.isAnimating = false
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    self.isAnimating = false
+                    completion?()
+                }
+                
             }
         }
     }
@@ -340,10 +346,6 @@ public class KAPinField : UITextField {
     // Updates textfield content
     @objc public func reloadAppearance() {
         
-        
-        
-        self.sizeToFit()
-        
         // Styling backviews
         for v in self.backViews {
             v.alpha = 1.0
@@ -358,8 +360,6 @@ public class KAPinField : UITextField {
         }
         
         self.sanitizeText()
-        
-        
         
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
@@ -411,13 +411,18 @@ public class KAPinField : UITextField {
             }
             attString.append(NSAttributedString(string: string, attributes: attributes))
         }
- 
-        self.attributedText = attString
+        
         
         if #available(iOS 11.0, *) {
             self.updateCursorPosition()
         }
         
+        guard !self.isAnimating else {
+            return
+        }
+        
+        self.attributedText = attString
+        self.sizeToFit()
         self.checkCodeValidity()
     }
     
@@ -503,7 +508,6 @@ public class KAPinField : UITextField {
             if let pinDelegate = self.properties.delegate {
                 let result = isRightToLeft ? String(self.invisibleText.reversed()) : self.invisibleText
                 pinDelegate.pinField(self, didFinishWith: result)
-                
             } else {
                 print("⚠️ : No delegate set for KAPinField. Set it via yourPinField.properties.delegate.")
             }

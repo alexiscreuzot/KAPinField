@@ -206,9 +206,7 @@ extension ViewController : KAPinFieldDelegate {
         } else {
             print("Success")
             field.animateSuccess(with: "👍") {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    self.refreshPinField()
-                }
+                self.refreshPinField()
             }
             
         }
