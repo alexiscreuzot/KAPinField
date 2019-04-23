@@ -83,9 +83,6 @@ public class KAPinField : UITextField {
     public override var text : String? {
         get { return invisibleText }
         set {
-            guard !self.isAnimating else {
-                return
-            }
             self.invisibleField.text = newValue
         }
     }
@@ -141,6 +138,10 @@ public class KAPinField : UITextField {
         super.layoutSubviews()
         self.bringSubviewToFront(self.invisibleField)
         self.invisibleField.frame = self.bounds
+        
+        guard !self.isAnimating else {
+            return
+        }
         
         // back views
         
@@ -346,6 +347,10 @@ public class KAPinField : UITextField {
     // Updates textfield content
     @objc public func reloadAppearance() {
         
+        guard !self.isAnimating else {
+            return
+        }
+        
         // Styling backviews
         for v in self.backViews {
             v.alpha = 1.0
@@ -411,7 +416,6 @@ public class KAPinField : UITextField {
             }
             attString.append(NSAttributedString(string: string, attributes: attributes))
         }
-        
         
         if #available(iOS 11.0, *) {
             self.updateCursorPosition()
