@@ -117,8 +117,10 @@ public class KAPinField : UITextField {
     private var attributes: [NSAttributedString.Key : Any] = [:]
     private var backViews: [UIView] = [UIView]()
     private var isAnimating: Bool = false
+    private var lastEntry: String = ""
     private var timer : Timer?
     private var currentFocusRange : NSRange?
+    
     
     // Mark: - Lifecycle
     
@@ -422,9 +424,12 @@ public class KAPinField : UITextField {
     private func sanitizeText() {
         var text = self.invisibleField.text ?? ""
         
-        if let char = text.last {
+        if let char = text.last,
+            text != lastEntry,
+            text.count == lastEntry.count + 1 {
             let isValid = self.properties.validCharacters.contains(char)
             self.properties.delegate?.pinField(self, didInput: char, isValid: isValid)
+            lastEntry = text
         }
         
         text = String(text.lazy.filter(self.properties.validCharacters.contains))
