@@ -90,14 +90,14 @@
                                 </connections>
                             </button>
                             <label opaque="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Code : 1234" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ee6-G1-KAi">
-                                <rect key="frame" x="18.666666666666657" y="257" width="337.66666666666674" height="17"/>
+                                <rect key="frame" x="18.666666666666657" y="253" width="337.66666666666674" height="17"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9IR-i8-vqo">
                                 <rect key="frame" x="0.0" y="597" width="375" height="215"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="215" id="wxz-dS-kPf"/>
                                 </constraints>
@@ -112,7 +112,7 @@
                             <constraint firstItem="u2o-qm-AuS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Ndg-Hs-4mw"/>
                             <constraint firstAttribute="trailing" secondItem="u2o-qm-AuS" secondAttribute="trailing" id="S0N-eT-0wG"/>
                             <constraint firstItem="deI-wI-pgE" firstAttribute="top" secondItem="d8l-Ws-A8U" secondAttribute="bottom" constant="36" id="VhG-k5-6cP"/>
-                            <constraint firstItem="d8l-Ws-A8U" firstAttribute="top" secondItem="Ee6-G1-KAi" secondAttribute="bottom" constant="26" id="aSq-c9-qmU"/>
+                            <constraint firstItem="d8l-Ws-A8U" firstAttribute="top" secondItem="Ee6-G1-KAi" secondAttribute="bottom" constant="30" id="aSq-c9-qmU"/>
                             <constraint firstItem="Ee6-G1-KAi" firstAttribute="leading" secondItem="d8l-Ws-A8U" secondAttribute="leading" id="azh-6H-ybt"/>
                             <constraint firstItem="9IR-i8-vqo" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="beu-SZ-ipe"/>
                             <constraint firstItem="d8l-Ws-A8U" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.9" id="bix-rC-xKH"/>

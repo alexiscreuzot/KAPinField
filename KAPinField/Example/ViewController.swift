@@ -81,6 +81,7 @@ class ViewController: UIViewController {
     @IBAction func refreshPinField() {
         
         // Random numberOfCharacters
+        pinField.text = ""
         pinField.properties.numberOfCharacters = [4, 5].randomElement()!
         
         // Random target code
@@ -113,7 +114,7 @@ class ViewController: UIViewController {
             pinField.appearance.tokenColor = UIColor.white.withAlphaComponent(0.2)
             pinField.appearance.tokenFocusColor = UIColor.white
             pinField.appearance.textColor = UIColor.white
-            pinField.appearance.font = .courier(50)
+            pinField.appearance.font = .courier(45)
             pinField.appearance.kerning = 18
             pinField.appearance.backOffset = 8
             pinField.appearance.backColor = UIColor.clear
@@ -204,13 +205,12 @@ extension ViewController : KAPinFieldDelegate {
             field.animateFailure()
         } else {
             print("Success")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                field.animateSuccess(with: "👍") {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                        self.refreshPinField()
-                    }
+            field.animateSuccess(with: "👍") {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    self.refreshPinField()
                 }
             }
+            
         }
     }
 }
