@@ -83,6 +83,7 @@ public class KAPinField : UITextField {
     public override var text : String? {
         get { return invisibleText }
         set {
+            hasFinished = false
             self.invisibleField.text = newValue
         }
     }
@@ -105,7 +106,6 @@ public class KAPinField : UITextField {
             return invisibleField.text ?? ""
         }
         set {
-            hasFinished = false
             self.reloadAppearance()
         }
     }
