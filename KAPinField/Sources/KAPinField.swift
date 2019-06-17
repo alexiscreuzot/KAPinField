@@ -105,6 +105,7 @@ public class KAPinField : UITextField {
             return invisibleField.text ?? ""
         }
         set {
+            hasFinished = false
             self.reloadAppearance()
         }
     }
@@ -115,7 +116,7 @@ public class KAPinField : UITextField {
     private var lastEntry: String = ""
     private var timer : Timer?
     private var currentFocusRange : NSRange?
-    
+    private var hasFinished = false
     
     // Mark: - Lifecycle
     
@@ -508,10 +509,12 @@ public class KAPinField : UITextField {
             return
         }
         
-        if self.invisibleText.count == self.properties.numberOfCharacters {
+        if self.invisibleText.count == self.properties.numberOfCharacters && !hasFinished {
+            hasFinished = true
             if let pinDelegate = self.properties.delegate {
                 let result = isRightToLeft ? String(self.invisibleText.reversed()) : self.invisibleText
                 pinDelegate.pinField(self, didFinishWith: result)
+                
             } else {
                 print("⚠️ : No delegate set for KAPinField. Set it via yourPinField.properties.delegate.")
             }
