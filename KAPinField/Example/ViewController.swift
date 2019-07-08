@@ -67,7 +67,7 @@ class ViewController: UIViewController {
         
         // Random numberOfCharacters
         pinField.text = ""
-        pinField.properties.numberOfCharacters = [3,4].randomElement()!
+        pinField.properties.numberOfCharacters = [4,5].randomElement()!
         
         // Random target code
         targetCode = self.randomCode(numDigits: pinField.properties.numberOfCharacters)

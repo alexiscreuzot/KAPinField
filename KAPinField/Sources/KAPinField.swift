@@ -473,10 +473,10 @@ public class KAPinField : UITextField {
         
         self.attributedText = attString
         
-        if attString.string == self.previousCode {
+        if invisibleText == self.previousCode {
             return
         }
-        self.previousCode = attString.string
+        self.previousCode = invisibleText
         
 //        self.sizeToFit()
         self.checkCodeValidity()
