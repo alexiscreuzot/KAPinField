@@ -433,7 +433,7 @@ public class KAPinField : UITextField {
         }
         self.previousCode = attString.string
         
-        self.sizeToFit()
+//        self.sizeToFit()
         self.checkCodeValidity()
     }
     
