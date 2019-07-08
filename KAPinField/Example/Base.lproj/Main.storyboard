@@ -75,7 +75,7 @@
                                 <viewLayoutGuide key="safeArea" id="4wk-QL-KCj"/>
                             </view>
                             <label opaque="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Code : 1234" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ee6-G1-KAi">
-                                <rect key="frame" x="121" y="177" width="78" height="17"/>
+                                <rect key="frame" x="121" y="167" width="78" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="xM1-qL-uy3"/>
                                 </constraints>
@@ -93,7 +93,7 @@
                                         </constraints>
                                         <color key="textColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                        <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad" keyboardAppearance="alert" textContentType="one-time-code"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad" keyboardAppearance="alert" returnKeyType="go" textContentType="one-time-code"/>
                                     </textField>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -128,7 +128,7 @@
                             <constraint firstItem="ZrA-JK-GPg" firstAttribute="centerX" secondItem="aDb-oH-ANJ" secondAttribute="centerX" id="FZP-4I-B0A"/>
                             <constraint firstItem="u2o-qm-AuS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Ndg-Hs-4mw"/>
                             <constraint firstAttribute="trailing" secondItem="u2o-qm-AuS" secondAttribute="trailing" id="S0N-eT-0wG"/>
-                            <constraint firstItem="ZrA-JK-GPg" firstAttribute="top" secondItem="Ee6-G1-KAi" secondAttribute="bottom" constant="10" id="in4-IT-LYe"/>
+                            <constraint firstItem="ZrA-JK-GPg" firstAttribute="top" secondItem="Ee6-G1-KAi" secondAttribute="bottom" constant="20" id="in4-IT-LYe"/>
                             <constraint firstItem="Ee6-G1-KAi" firstAttribute="top" relation="greaterThanOrEqual" secondItem="u2o-qm-AuS" secondAttribute="bottom" constant="16" id="p0N-xu-6Zl"/>
                             <constraint firstItem="Ee6-G1-KAi" firstAttribute="top" secondItem="u2o-qm-AuS" secondAttribute="bottom" priority="250" constant="40" id="sdr-hB-WxV"/>
                             <constraint firstItem="deI-wI-pgE" firstAttribute="centerY" secondItem="aDb-oH-ANJ" secondAttribute="centerY" priority="751" id="wMO-13-RHJ"/>

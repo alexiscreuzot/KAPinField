@@ -22,7 +22,7 @@ public struct KAPinFieldProperties {
     public weak var delegate : KAPinFieldDelegate? = nil
     public var numberOfCharacters: Int = 4 {
         didSet {
-            precondition(numberOfCharacters >= 1, "🚫 Number of character must be >= 1")
+            precondition(numberOfCharacters >= 0, "🚫 Number of character must be >= 0, with 0 meaning dynamic")
         }
     }
     public var validCharacters: String = "0123456789" {
@@ -116,6 +116,8 @@ public class KAPinField : UITextField {
     private var timer : Timer?
     private var currentFocusRange : NSRange?
     private var previousCode : String?
+    private var isDynamicLength = false
+    private var toolbar : UIToolbar?
     
     // Mark: - Lifecycle
     
@@ -139,7 +141,7 @@ public class KAPinField : UITextField {
         self.bringSubviewToFront(self.invisibleField)
         self.invisibleField.frame = self.bounds
         
-        guard !self.isAnimating else {
+        guard !self.isAnimating, !self.isDynamicLength else {
             return
         }
         
@@ -256,11 +258,42 @@ public class KAPinField : UITextField {
     
     // Mark: - Private function
     
+    @objc func cancelNumberPad() {
+        self.endEditing(true)
+    }
+    
+    @objc func doneWithNumberPad() {
+        self.properties.delegate?.pinField(self, didFinishWith: self.invisibleText)
+    }
+    
     private func reload() {
         
         // Only setup if view showing
         guard self.superview != nil else {
             return
+        }
+        
+        // Dynamic length flag
+        isDynamicLength = (self.properties.numberOfCharacters == 0)
+        
+        if isDynamicLength {
+            if self.inputAccessoryView == nil {
+                let frame = CGRect(x: 0,
+                                   y: 0,
+                                   width: UIScreen.main.bounds.width,
+                                   height: 50)
+                let numberToolbar = UIToolbar(frame:frame)
+                numberToolbar.barStyle = .blackTranslucent
+                numberToolbar.items = [
+                    UIBarButtonItem.init(barButtonSystemItem: .cancel, target: self, action: #selector(cancelNumberPad)),
+                    UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
+                    UIBarButtonItem.init(barButtonSystemItem: .done, target: self, action: #selector(doneWithNumberPad))
+                ]
+                numberToolbar.sizeToFit()
+                self.inputAccessoryView = numberToolbar
+            }
+        } else {
+            self.inputAccessoryView = nil
         }
         
         // Debugging ---------------
@@ -320,6 +353,11 @@ public class KAPinField : UITextField {
     }
     
     @objc private func animateFocusedToken() {
+        
+        guard !isDynamicLength else {
+            return
+        }
+        
         if  let attString = self.attributedText?.mutableCopy() as? NSMutableAttributedString,
             let range = self.currentFocusRange {
             
@@ -367,12 +405,19 @@ public class KAPinField : UITextField {
         
         self.sanitizeText()
         
+        
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         let font =  self.appearance.font?.font() ?? self.font ?? UIFont.preferredFont(forTextStyle: .headline)
         self.attributes = [ .paragraphStyle : paragraph,
                             .font : font,
                             .kern : self.appearance.kerning]
+        
+        if isDynamicLength {
+            attributes[.foregroundColor] = self.appearance.textColor
+            self.attributedText =  NSAttributedString(string: self.invisibleField.text!, attributes: attributes)
+            return
+        }
         
         // Display
         let attString = NSMutableAttributedString(string: "")
@@ -449,7 +494,11 @@ public class KAPinField : UITextField {
         }
         
         text = String(text.lazy.filter(self.properties.validCharacters.contains))
-        text = String(text.prefix(self.properties.numberOfCharacters))
+        
+        if !self.isDynamicLength {
+            text = String(text.prefix(self.properties.numberOfCharacters))
+        }
+        
         self.invisibleField.text = text
     }
     
@@ -511,7 +560,7 @@ public class KAPinField : UITextField {
     
     private func checkCodeValidity() {
         
-        guard !self.isAnimating else {
+        guard !self.isAnimating, !self.isDynamicLength else {
             return
         }
         

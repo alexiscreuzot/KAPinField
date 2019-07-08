@@ -35,11 +35,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardDidShow),
-                                               name: UIResponder.keyboardDidShowNotification,
-                                               object: nil)
-        
         self.segmentControl.removeAllSegments()
         for (index, style) in Style.allCases.enumerated() {
             self.segmentControl.insertSegment(withTitle: style.rawValue.capitalized, at: index, animated: false)
@@ -58,17 +53,7 @@ class ViewController: UIViewController {
         // Get focus
         _ = pinField.becomeFirstResponder()
     }
-    
-    @objc func keyboardDidShow(notification: Notification) {
-        guard let info = notification.userInfo else { return }
-        guard let frameInfo = info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
-        let keyboardFrame = frameInfo.cgRectValue
-        
-        self.keyboardheightConstraint.constant = keyboardFrame.height
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
+
     
     func randomCode(numDigits: Int) -> String {
         var string = ""
@@ -82,7 +67,7 @@ class ViewController: UIViewController {
         
         // Random numberOfCharacters
         pinField.text = ""
-        pinField.properties.numberOfCharacters = [4, 5].randomElement()!
+        pinField.properties.numberOfCharacters = [3,4].randomElement()!
         
         // Random target code
         targetCode = self.randomCode(numDigits: pinField.properties.numberOfCharacters)
