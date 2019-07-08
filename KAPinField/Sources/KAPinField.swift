@@ -78,7 +78,7 @@ public class KAPinField : UITextField {
             self.reloadAppearance()
         }
     }
-
+    
     // Mark: - Overriden vars
     public override var text : String? {
         get { return invisibleText }
@@ -153,9 +153,9 @@ public class KAPinField : UITextField {
         }
         let nsText = NSString(string: myText)
         let textFrame = nsText.boundingRect(with: self.bounds.size,
-                                        options: .usesLineFragmentOrigin,
-                                        attributes: self.attributes,
-                                        context: nil)
+                                            options: .usesLineFragmentOrigin,
+                                            attributes: self.attributes,
+                                            context: nil)
         
         
         let actualWidth = textFrame.width
@@ -268,16 +268,18 @@ public class KAPinField : UITextField {
     
     private func reload() {
         
+        // Dynamic length flag
+        isDynamicLength = (self.properties.numberOfCharacters == 0)
+        
         // Only setup if view showing
         guard self.superview != nil else {
             return
         }
         
-        // Dynamic length flag
-        isDynamicLength = (self.properties.numberOfCharacters == 0)
-        
+        self.endEditing(true)
         if isDynamicLength {
             if self.inputAccessoryView == nil {
+                
                 let frame = CGRect(x: 0,
                                    y: 0,
                                    width: UIScreen.main.bounds.width,
@@ -293,7 +295,11 @@ public class KAPinField : UITextField {
                 self.inputAccessoryView = numberToolbar
             }
         } else {
+            
             self.inputAccessoryView = nil
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            _ = self.becomeFirstResponder()
         }
         
         // Debugging ---------------
@@ -422,8 +428,8 @@ public class KAPinField : UITextField {
         // Display
         let attString = NSMutableAttributedString(string: "")
         let loopStride = isRightToLeft
-                    ? stride(from: self.properties.numberOfCharacters-1, to: -1, by: -1)
-                    : stride(from: 0, to: self.properties.numberOfCharacters, by: 1)
+            ? stride(from: self.properties.numberOfCharacters-1, to: -1, by: -1)
+            : stride(from: 0, to: self.properties.numberOfCharacters, by: 1)
         
         for i in loopStride {
             
@@ -478,7 +484,7 @@ public class KAPinField : UITextField {
         }
         self.previousCode = invisibleText
         
-//        self.sizeToFit()
+        //        self.sizeToFit()
         self.checkCodeValidity()
     }
     
@@ -515,8 +521,8 @@ public class KAPinField : UITextField {
                 
                 // Compute the currently focused element
                 if   let attString = self.attributedText?.mutableCopy() as? NSMutableAttributedString,
-                     var range = self.invisibleField.selectedRange,
-                     range.location >= -1 && range.location < self.properties.numberOfCharacters {
+                    var range = self.invisibleField.selectedRange,
+                    range.location >= -1 && range.location < self.properties.numberOfCharacters {
                     
                     // Compute range of focused text
                     if self.isRightToLeft {
@@ -551,7 +557,6 @@ public class KAPinField : UITextField {
                         let backView = self.backViews[backIndex]
                         backView.backgroundColor = self.appearance.backFocusColor ?? self.appearance.backColor
                         backView.layer.borderColor = self.appearance.backBorderFocusColor?.cgColor ?? self.appearance.backBorderColor.cgColor
-                        
                     }
                 }
             }
