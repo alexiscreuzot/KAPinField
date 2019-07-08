@@ -83,7 +83,6 @@ public class KAPinField : UITextField {
     public override var text : String? {
         get { return invisibleText }
         set {
-            hasFinished = false
             self.invisibleField.text = newValue
         }
     }
@@ -116,7 +115,7 @@ public class KAPinField : UITextField {
     private var lastEntry: String = ""
     private var timer : Timer?
     private var currentFocusRange : NSRange?
-    private var hasFinished = false
+    private var previousCode : String?
     
     // Mark: - Lifecycle
     
@@ -168,7 +167,7 @@ public class KAPinField : UITextField {
             var vFrame = CGRect(x: x,
                                 y: -1,
                                 width: digitWidth,
-                                height: self.frame.height)
+                                height: self.bounds.height)
             vFrame.origin.x += self.appearance.backOffset / 2
             vFrame.size.width -= self.appearance.backOffset
             
@@ -210,6 +209,7 @@ public class KAPinField : UITextField {
         CATransaction.setCompletionBlock({
             self.isAnimating = false
             completion?()
+            self.reloadAppearance()
         })
         
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
@@ -427,6 +427,12 @@ public class KAPinField : UITextField {
         }
         
         self.attributedText = attString
+        
+        if attString.string == self.previousCode {
+            return
+        }
+        self.previousCode = attString.string
+        
         self.sizeToFit()
         self.checkCodeValidity()
     }
@@ -509,12 +515,10 @@ public class KAPinField : UITextField {
             return
         }
         
-        if self.invisibleText.count == self.properties.numberOfCharacters && !hasFinished {
-            hasFinished = true
+        if self.invisibleText.count == self.properties.numberOfCharacters {
             if let pinDelegate = self.properties.delegate {
                 let result = isRightToLeft ? String(self.invisibleText.reversed()) : self.invisibleText
                 pinDelegate.pinField(self, didFinishWith: result)
-                
             } else {
                 print("⚠️ : No delegate set for KAPinField. Set it via yourPinField.properties.delegate.")
             }
