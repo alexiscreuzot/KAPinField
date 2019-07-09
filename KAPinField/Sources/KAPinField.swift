@@ -298,9 +298,6 @@ public class KAPinField : UITextField {
             
             self.inputAccessoryView = nil
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-            _ = self.becomeFirstResponder()
-        }
         
         // Debugging ---------------
         // Change alpha for easy debug
