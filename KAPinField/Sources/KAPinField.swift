@@ -285,7 +285,7 @@ public class KAPinField : UITextField {
                                    width: UIScreen.main.bounds.width,
                                    height: 50)
                 let numberToolbar = UIToolbar(frame:frame)
-                numberToolbar.barStyle = .blackTranslucent
+                numberToolbar.barStyle = .default
                 numberToolbar.items = [
                     UIBarButtonItem.init(barButtonSystemItem: .cancel, target: self, action: #selector(cancelNumberPad)),
                     UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
