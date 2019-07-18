@@ -10,12 +10,12 @@ import UIKit
 
 // Mark: - KAPinFieldDelegate
 public protocol KAPinFieldDelegate : AnyObject {
-    func pinField(_ field: KAPinField, didInput character: Character, isValid: Bool) // Optional
+    func pinField(_ field: KAPinField, didChangeTo string: String, isValid: Bool) // Optional
     func pinField(_ field: KAPinField, didFinishWith code: String)
 }
 
 public extension KAPinFieldDelegate {
-    func pinField(_ field: KAPinField, didInput character: Character, isValid: Bool) {}
+    func pinField(_ field: KAPinField, didChangeTo string: String, isValid: Bool) {}
 }
 
 public struct KAPinFieldProperties {
@@ -488,11 +488,11 @@ public class KAPinField : UITextField {
     private func sanitizeText() {
         var text = self.invisibleField.text ?? ""
         
-        if let char = text.last,
-            text != lastEntry,
-            text.count == lastEntry.count + 1 {
-            let isValid = self.properties.validCharacters.contains(char)
-            self.properties.delegate?.pinField(self, didInput: char, isValid: isValid)
+        if text != lastEntry {
+            let isValid = text.reduce(true) { result, char -> Bool in
+                return result && self.properties.validCharacters.contains(char)
+            }
+            self.properties.delegate?.pinField(self, didChangeTo: text, isValid: isValid)
             lastEntry = text
         }
         

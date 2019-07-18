@@ -171,12 +171,11 @@ class ViewController: UIViewController {
 
 // Mark: - KAPinFieldDelegate
 extension ViewController : KAPinFieldDelegate {
-    
-    func pinField(_ field: KAPinField, didInput character: Character, isValid: Bool) {
+    func pinField(_ field: KAPinField, didChangeTo string: String, isValid: Bool) {
         if isValid {
-            print("didInput valid character: \(character) ")
+            print("Valid input: \(string) ")
         } else {
-            print("didInput invalid character : \(character) ")
+            print("Invalid input: \(string) ")
             self.pinField.animateFailure()
         }
     }
