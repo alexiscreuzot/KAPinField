@@ -492,7 +492,10 @@ public class KAPinField : UITextField {
             let isValid = text.reduce(true) { result, char -> Bool in
                 return result && self.properties.validCharacters.contains(char)
             }
-            self.properties.delegate?.pinField(self, didChangeTo: text, isValid: isValid)
+            if text.count <= self.properties.numberOfCharacters {
+                self.properties.delegate?.pinField(self, didChangeTo: text, isValid: isValid)
+            }
+            
             lastEntry = text
         }
         
