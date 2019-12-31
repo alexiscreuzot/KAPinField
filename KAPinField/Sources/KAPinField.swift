@@ -447,17 +447,19 @@ public class KAPinField : UITextField {
             
             // Color for active / inactive
             let backIndex = self.isRightToLeft ? self.properties.numberOfCharacters-i-1 : i
-            let backView = self.backViews[backIndex]
-            if isToken {
-                attributes[.foregroundColor] = self.appearance.tokenColor
-                backView.backgroundColor = self.appearance.backColor
-                backView.layer.borderColor = self.appearance.backBorderColor.cgColor
-            } else {
-                attributes[.foregroundColor] = self.appearance.textColor
-                backView.backgroundColor = self.appearance.backActiveColor ?? self.appearance.backColor
-                backView.layer.borderColor = self.appearance.backBorderActiveColor?.cgColor ?? self.appearance.backBorderColor.cgColor
+            if !self.backViews.isEmpty && backIndex < self.backViews.count {
+                let backView = self.backViews[backIndex]
+                if isToken {
+                    attributes[.foregroundColor] = self.appearance.tokenColor
+                    backView.backgroundColor = self.appearance.backColor
+                    backView.layer.borderColor = self.appearance.backBorderColor.cgColor
+                } else {
+                    attributes[.foregroundColor] = self.appearance.textColor
+                    backView.backgroundColor = self.appearance.backActiveColor ?? self.appearance.backColor
+                    backView.layer.borderColor = self.appearance.backBorderActiveColor?.cgColor ?? self.appearance.backBorderColor.cgColor
+                }
             }
-            
+
             // Fix kerning-centering
             let indexForKernFix = isRightToLeft ? 0 : self.properties.numberOfCharacters-1
             if i == indexForKernFix {
@@ -554,9 +556,11 @@ public class KAPinField : UITextField {
                         var backIndex = self.isRightToLeft ? self.properties.numberOfCharacters-offset-1 : offset
                         backIndex = min(backIndex, self.properties.numberOfCharacters-1)
                         backIndex = max(backIndex, 0)
-                        let backView = self.backViews[backIndex]
-                        backView.backgroundColor = self.appearance.backFocusColor ?? self.appearance.backColor
-                        backView.layer.borderColor = self.appearance.backBorderFocusColor?.cgColor ?? self.appearance.backBorderColor.cgColor
+                        if !self.backViews.isEmpty && backIndex < self.backViews.count {
+                            let backView = self.backViews[backIndex]
+                            backView.backgroundColor = self.appearance.backFocusColor ?? self.appearance.backColor
+                            backView.layer.borderColor = self.appearance.backBorderFocusColor?.cgColor ?? self.appearance.backBorderColor.cgColor
+                        }
                     }
                 }
             }
