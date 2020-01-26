@@ -99,7 +99,12 @@ public class KAPinField : UITextField {
     
     // Uses an invisible UITextField to handle text
     // this is necessary for iOS12 .oneTimePassword feature
-    private var invisibleField = UITextField()
+    private var invisibleField :UITextField = {
+        let textField = UITextField()
+        textField.inputView = UIView()
+        textField.inputAccessoryView = nil
+        return textField
+    }()
     private var invisibleText : String {
         get {
             return invisibleField.text ?? ""
