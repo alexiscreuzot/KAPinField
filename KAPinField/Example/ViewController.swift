@@ -95,6 +95,8 @@ class ViewController: UIViewController {
             
             pinField.properties.token = "•"
             pinField.properties.animateFocus = true
+            pinField.properties.isUppercased = true
+            pinField.properties.validCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             
             pinField.appearance.tokenColor = UIColor.white.withAlphaComponent(0.2)
             pinField.appearance.tokenFocusColor = UIColor.white
@@ -119,6 +121,8 @@ class ViewController: UIViewController {
             
             pinField.properties.token = "-"
             pinField.properties.animateFocus = false
+            pinField.properties.isUppercased = false
+            pinField.properties.validCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             
             let startIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 0)
             let endIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 1)
@@ -127,7 +131,7 @@ class ViewController: UIViewController {
             pinField.appearance.tokenColor = self.blueColor.withAlphaComponent(0.2)
             pinField.appearance.tokenFocusColor = self.blueColor.withAlphaComponent(0.2)
             pinField.appearance.textColor = self.blueColor
-            pinField.appearance.font = .menlo(40)
+            pinField.appearance.font = .courierBold(40)
             pinField.appearance.kerning = 24
             pinField.appearance.backOffset = 5
             pinField.appearance.backColor = UIColor.clear
