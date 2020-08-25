@@ -44,6 +44,7 @@ public struct KAPinFieldProperties {
     public var animateFocus : Bool = true
     public var isSecure : Bool = false
     public var secureToken: Character = "•"
+    public var isUppercased: Bool = false
 }
 
 public struct KAPinFieldAppearance {
@@ -507,6 +508,10 @@ public class KAPinField : UITextField {
     
     private func sanitizeText() {
         var text = self.invisibleField.text ?? ""
+        
+        if properties.isUppercased {
+            text = text.uppercased()
+        }
         
         if text != lastEntry {
             let isValid = text.reduce(true) { result, char -> Bool in
