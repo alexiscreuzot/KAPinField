@@ -51,7 +51,7 @@ class ViewController: UIViewController {
         self.refreshPinField()
         
         // Get focus
-        _ = pinField.becomeFirstResponder()
+        pinField.becomeFirstResponder()
     }
 
     
