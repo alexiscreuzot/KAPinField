@@ -72,6 +72,7 @@ pinField.properties.text = "123" // You can set part or all of the text
 pinField.properties.animateFocus = true // Animate the currently focused token
 pinField.properties.isSecure = false // Secure pinField will hide actual input
 pinField.properties.secureToken = "*" // Token used to hide actual character input when using isSecure = true
+pinField.properties.isUppercased = false // You can set this to convert input to uppercased.
 ```
 
 ##### Styling
@@ -92,6 +93,7 @@ pinField.appearance.backFocusColor = UIColor.clear
 pinField.appearance.backBorderFocusColor = UIColor.white.withAlphaComponent(0.8)
 pinField.appearance.backActiveColor = UIColor.clear
 pinField.appearance.backBorderActiveColor = UIColor.white
+pinField.appearance.keyboardType = UIKeyboardType.numberPad // Specify keyboard type
 ```
 
 ### Font
