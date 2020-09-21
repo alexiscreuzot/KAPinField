@@ -69,6 +69,13 @@ public struct KAPinFieldAppearance {
 // Mark: - KAPinField Class
 public class KAPinField : UITextField {
     
+    
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        print("SJHQGDJHGQS")
+        self.reload()
+    }
+    
     // Mark: - Public vars
     public var properties = KAPinFieldProperties() {
         didSet {
@@ -422,10 +429,6 @@ public class KAPinField : UITextField {
             v.layer.borderColor = self.appearance.backBorderColor.cgColor
             v.layer.borderWidth = self.appearance.backBorderWidth
             v.layer.cornerRadius = self.appearance.backCornerRadius
-        }
-        
-        if (UIPasteboard.general.string == self.invisibleText && isRightToLeft) {
-            self.invisibleField.text = String(self.invisibleText.reversed())
         }
         
         self.sanitizeText()
