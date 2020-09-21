@@ -63,6 +63,7 @@ public struct KAPinFieldAppearance {
     public var backActiveColor : UIColor?
     public var backBorderActiveColor : UIColor?
     public var backRounded : Bool = false
+    public var keyboardType: UIKeyboardType = .numberPad
 }
 
 // Mark: - KAPinField Class
@@ -100,10 +101,9 @@ public class KAPinField : UITextField {
     
     // Uses an invisible UITextField to handle text
     // this is necessary for iOS12 .oneTimePassword feature
-    private var invisibleField :UITextField = {
+    // Remove textField.inputView = UIView() to fix issue with keyboard
+    private var invisibleField: UITextField = {
         let textField = UITextField()
-        textField.inputView = UIView()
-        textField.inputAccessoryView = nil
         return textField
     }()
     private var invisibleText : String {
@@ -214,7 +214,7 @@ public class KAPinField : UITextField {
     
     // Mark: - Public functions
     
-    override public func becomeFirstResponder() -> Bool {
+    @discardableResult override public func becomeFirstResponder() -> Bool {
         return self.invisibleField.becomeFirstResponder()
     }
     
@@ -331,12 +331,15 @@ public class KAPinField : UITextField {
         self.invisibleField.autocapitalizationType = .none
         self.invisibleField.autocorrectionType = .no
         self.invisibleField.spellCheckingType = .no
+
+        self.invisibleField.keyboardType = self.appearance.keyboardType
         
         if #available(iOS 12.0, *) {
             // Show possible prediction on iOS >= 12
             self.invisibleField.textContentType = .oneTimeCode
             self.invisibleField.autocorrectionType = .yes
         }
+
         self.addSubview(self.invisibleField)
         self.invisibleField.addTarget(self, action: #selector(reloadAppearance), for: .allEditingEvents)
         
