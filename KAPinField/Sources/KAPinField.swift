@@ -157,6 +157,10 @@ public class KAPinField : UITextField {
         set { self.invisibleField.keyboardType = newValue}
     }
     
+    public override func reloadInputViews() {
+      invisibleField.reloadInputViews()
+    }
+    
     override public func awakeFromNib() {
         super.awakeFromNib()
         self.reload()
