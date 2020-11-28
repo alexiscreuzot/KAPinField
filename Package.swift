@@ -1,12 +1,34 @@
+// swift-tools-version:5.0
+
 import PackageDescription
 
 let package = Package(
-name: "KAPinField",
-exclude: [
-    "xample"
-],
-targets: [
-    Target(
-        name: "KAPinField"
-    )
-]
+    name: "KAPinField",
+    platforms: [
+        .iOS(.v9),
+    ],
+    products: [
+        .library(
+            name: "KAPinField",
+            targets: ["KAPinField"]
+        ),
+    ],
+    dependencies: [],
+    targets: [
+        .target(
+            name: "KAPinField",
+            path: "KAPinField",
+            exclude: [
+                "Example",
+                "Sources/Info.plist",
+                "Sources/KAPinField.h",
+            ],
+            sources: [
+                "Sources",
+            ],
+            linkerSettings: [
+                .linkedFramework("UIKit"),
+            ]
+        ),
+    ]
+)
