@@ -45,47 +45,60 @@ public struct KAPinFieldProperties {
     public var isSecure : Bool = false
     public var secureToken: Character = "•"
     public var isUppercased: Bool = false
+    public var keyboardType: UIKeyboardType = .numberPad
 }
 
 public struct KAPinFieldAppearance {
+    
+    public init() {}
+    
     public var font : KA_MonospacedFont? = .menlo(40)
-    public var tokenColor : UIColor?
-    public var tokenFocusColor : UIColor?
-    public var textColor : UIColor?
+    public var tokenColor : UIColor = .black
+    public var tokenFocusColor : UIColor = .gray
+    public var textColor : UIColor = .black
     public var kerning : CGFloat = 20.0
     public var backColor : UIColor = UIColor.clear
     public var backBorderColor : UIColor = UIColor.clear
     public var backBorderWidth : CGFloat = 1
     public var backCornerRadius : CGFloat = 4
     public var backOffset : CGFloat = 4
-    public var backFocusColor : UIColor?
-    public var backBorderFocusColor : UIColor?
-    public var backActiveColor : UIColor?
-    public var backBorderActiveColor : UIColor?
+    public var backFocusColor : UIColor = .clear
+    public var backBorderFocusColor : UIColor = .black
+    public var backActiveColor : UIColor = .clear
+    public var backBorderActiveColor : UIColor = .black
     public var backRounded : Bool = false
-    public var keyboardType: UIKeyboardType = .numberPad
 }
 
 // Mark: - KAPinField Class
 public class KAPinField : UITextField {
     
-    
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        print("SJHQGDJHGQS")
         self.reload()
     }
     
     // Mark: - Public vars
-    public var properties = KAPinFieldProperties() {
+    private (set) var properties = KAPinFieldProperties() {
         didSet {
             self.reload()
         }
     }
-    public var appearance = KAPinFieldAppearance() {
+    private (set) var appearance = KAPinFieldAppearance() {
         didSet {
             self.reloadAppearance()
         }
+    }
+    
+    public func updateProperties(block : ((inout KAPinFieldProperties) -> ())) {
+        var properties = self.properties
+        block(&properties)
+        self.properties = properties
+    }
+    
+    public func updateAppearence(block : ((inout KAPinFieldAppearance) -> ())) {
+        var appearance = self.appearance
+        block(&appearance)
+        self.appearance = appearance
     }
     
     // Mark: - Overriden vars
@@ -343,7 +356,7 @@ public class KAPinField : UITextField {
         self.invisibleField.autocorrectionType = .no
         self.invisibleField.spellCheckingType = .no
 
-        self.invisibleField.keyboardType = self.appearance.keyboardType
+        self.invisibleField.keyboardType = self.properties.keyboardType
         
         if #available(iOS 12.0, *) {
             // Show possible prediction on iOS >= 12
@@ -485,7 +498,7 @@ public class KAPinField : UITextField {
                 } else {
                     attributes[.foregroundColor] = self.appearance.textColor
                     backView.backgroundColor = self.appearance.backActiveColor ?? self.appearance.backColor
-                    backView.layer.borderColor = self.appearance.backBorderActiveColor?.cgColor ?? self.appearance.backBorderColor.cgColor
+                    backView.layer.borderColor = self.appearance.backBorderActiveColor.cgColor ?? self.appearance.backBorderColor.cgColor
                 }
             }
 
@@ -592,7 +605,7 @@ public class KAPinField : UITextField {
                         if !self.backViews.isEmpty && backIndex < self.backViews.count {
                             let backView = self.backViews[backIndex]
                             backView.backgroundColor = self.appearance.backFocusColor ?? self.appearance.backColor
-                            backView.layer.borderColor = self.appearance.backBorderFocusColor?.cgColor ?? self.appearance.backBorderColor.cgColor
+                            backView.layer.borderColor = self.appearance.backBorderFocusColor.cgColor ?? self.appearance.backBorderColor.cgColor
                         }
                     }
                 }
