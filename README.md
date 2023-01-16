@@ -6,8 +6,9 @@
 [![Pod License](http://img.shields.io/cocoapods/l/SDWebImage.svg?style=flat)](https://raw.githubusercontent.com/kirualex/SwiftyGif/master/LICENSE)
 
 # KAPinField
-Lightweight pin code field library for iOS, written in Swift.
-This library also plays well with the all new iOS 12 one time password autofill.
+### Lightweight pin code field library for iOS, written in Swift
+
+**Supports one time password autofill out of the box !**
 
 <table>
   <tr>
@@ -27,6 +28,7 @@ With Cocoapods
 `pod 'KAPinField'`
 
 ## Usage
+
 ```swift
 import KAPinField
 
@@ -63,7 +65,7 @@ extension MyController : KAPinFieldDelegate {
 ### Properties
 All the logic properties are available in the `KAPinFieldProperties` struct named `properties`.
 
-** Token can't be a whitespace due to Apple handling of trailing spaces. You can achieve the same effect using any token with `tokenColor` and `tokenFocusColor` set to `.clear` **
+**Token can't be a whitespace due to Apple handling of trailing spaces. You can achieve the same effect using any token with `tokenColor` and `tokenFocusColor` set to `.clear`**
 
 ##### Logic
 ```swift
