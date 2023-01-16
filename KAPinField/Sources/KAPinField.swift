@@ -34,11 +34,7 @@ public struct KAPinFieldProperties {
     public var token: Character = "•" {
         didSet {
             precondition(!validCharacters.contains(token), "🚫 token can't be one of the valid characters \"\(token)\"")
-            
-            // Change space to insecable space
-            if token == " " {
-                self.token = " "
-            }
+            precondition(!token.isWhitespace, "🚫 token can't be a whitespace. Please use a token with a clear color to achieve the same effect")
         }
     }
     public var animateFocus : Bool = true
@@ -189,7 +185,6 @@ public class KAPinField : UITextField {
         }
         
         // back views
-        
         var myText = ""
         for _ in 0..<self.properties.numberOfCharacters {
             myText += "0"
@@ -419,7 +414,6 @@ public class KAPinField : UITextField {
             let duration: Double = isClear ? 0.3 : 0.6
             if isClear{
                 atts[.foregroundColor] = self.appearance.tokenFocusColor
-                    ?? self.appearance.tokenColor
             } else {
                 atts[.foregroundColor] = UIColor.clear
             }
@@ -450,9 +444,9 @@ public class KAPinField : UITextField {
         
         self.sanitizeText()
         
-        
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
+        
         let font =  self.appearance.font?.font() ?? self.font ?? UIFont.preferredFont(forTextStyle: .headline)
         self.attributes = [ .paragraphStyle : paragraph,
                             .font : font,
@@ -497,8 +491,8 @@ public class KAPinField : UITextField {
                     backView.layer.borderColor = self.appearance.backBorderColor.cgColor
                 } else {
                     attributes[.foregroundColor] = self.appearance.textColor
-                    backView.backgroundColor = self.appearance.backActiveColor ?? self.appearance.backColor
-                    backView.layer.borderColor = self.appearance.backBorderActiveColor.cgColor ?? self.appearance.backBorderColor.cgColor
+                    backView.backgroundColor = self.appearance.backActiveColor
+                    backView.layer.borderColor = self.appearance.backBorderActiveColor.cgColor
                 }
             }
 
@@ -507,6 +501,7 @@ public class KAPinField : UITextField {
             if i == indexForKernFix {
                 attributes[.kern] = 0.0
             }
+            
             attString.append(NSAttributedString(string: string, attributes: attributes))
         }
         
@@ -588,7 +583,6 @@ public class KAPinField : UITextField {
                         // Token focus color
                         var atts = attString.attributes(at: range.location, effectiveRange: nil)
                         atts[.foregroundColor] = self.appearance.tokenFocusColor
-                            ?? self.appearance.tokenColor
                         attString.setAttributes(atts, range: range)
                         
                         // Avoid long fade from tick()
@@ -604,8 +598,8 @@ public class KAPinField : UITextField {
                         backIndex = max(backIndex, 0)
                         if !self.backViews.isEmpty && backIndex < self.backViews.count {
                             let backView = self.backViews[backIndex]
-                            backView.backgroundColor = self.appearance.backFocusColor ?? self.appearance.backColor
-                            backView.layer.borderColor = self.appearance.backBorderFocusColor.cgColor ?? self.appearance.backBorderColor.cgColor
+                            backView.backgroundColor = self.appearance.backFocusColor
+                            backView.layer.borderColor = self.appearance.backBorderFocusColor.cgColor
                         }
                     }
                 }

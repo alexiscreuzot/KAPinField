@@ -24,17 +24,11 @@ class ViewController: UIViewController {
         return .lightContent
     }
     
-   
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // -- Appearance --
-        self.updateStyle()
-        
         // -- Properties --
-        pinField.properties.delegate = self
-        self.refreshPinField()
+        self.setupPinfield()
         
         // Get focus
         pinField.becomeFirstResponder()
@@ -49,50 +43,58 @@ class ViewController: UIViewController {
         return string
     }
     
-    @IBAction func refreshPinField() {
+    @IBAction func setupPinfield() {
         
         // Random numberOfCharacters
         pinField.text = ""
-        pinField.properties.numberOfCharacters = [4,5].randomElement()!
+        
+        pinField.updateProperties { properties in
+            properties.numberOfCharacters = [4,5].randomElement()!
+            properties.delegate = self
+        }
         
         // Random target code
         targetCode = self.randomCode(numDigits: pinField.properties.numberOfCharacters)
         targetCodeLabel.text = "Code : \(targetCode)"
         UIPasteboard.general.string = targetCode
         
-        self.updateStyle()
+        self.refresh()
     }
     
-    func updateStyle() {
-        
-        pinField.properties.isSecure = self.secureSwitch.isOn
-        
+    @IBAction func toggleSecure() {
+        self.refresh()
+        self.pinField.becomeFirstResponder()
+    }
+    
+    func refresh() {
+                
         self.targetCodeLabel.textColor = UIColor.label.withAlphaComponent(0.8)
         
-        pinField.properties.token = "-"
-        pinField.properties.animateFocus = false
-        pinField.properties.isUppercased = false
-        pinField.properties.validCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+        pinField.updateProperties { properties in
+            properties.isSecure = self.secureSwitch.isOn
+            properties.token = "•"
+            properties.animateFocus = false
+            properties.isUppercased = false
+            properties.validCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+        }
         
-        //        let startIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 0)
-        //        let endIndex = self.targetCode.index(self.targetCode.startIndex, offsetBy: 1)
-        //        pinField.text = String(self.targetCode[startIndex...endIndex])
-        
-        pinField.appearance.tokenColor = UIColor.label.withAlphaComponent(0.2)
-        pinField.appearance.tokenFocusColor = UIColor.label.withAlphaComponent(0.2)
-        pinField.appearance.textColor = UIColor.label
-        pinField.appearance.font = .courierBold(40)
-        pinField.appearance.kerning = 24
-        pinField.appearance.backOffset = 5
-        pinField.appearance.backColor = UIColor.clear
-        pinField.appearance.backBorderWidth = 1
-        pinField.appearance.backBorderColor = UIColor.label.withAlphaComponent(0.2)
-        pinField.appearance.backCornerRadius = 4
-        pinField.appearance.backFocusColor = UIColor.clear
-        pinField.appearance.backBorderFocusColor = UIColor.label.withAlphaComponent(0.8)
-        pinField.appearance.backActiveColor = UIColor.clear
-        pinField.appearance.backBorderActiveColor = UIColor.label
-        pinField.appearance.backRounded = false
+        pinField.updateAppearence { appearance in
+            appearance.tokenColor = UIColor.clear
+            appearance.tokenFocusColor = UIColor.clear
+            appearance.textColor = UIColor.label
+            appearance.font = .menlo(40)
+            appearance.kerning = 24
+            appearance.backOffset = 8
+            appearance.backColor = UIColor.clear
+            appearance.backBorderWidth = 1
+            appearance.backBorderColor = UIColor.label.withAlphaComponent(0.2)
+            appearance.backCornerRadius = 4
+            appearance.backFocusColor = UIColor.clear
+            appearance.backBorderFocusColor = UIColor.systemBlue
+            appearance.backActiveColor = UIColor.clear
+            appearance.backBorderActiveColor = UIColor.label
+            appearance.backRounded = false
+        }
     }
 }
 
@@ -117,7 +119,7 @@ extension ViewController : KAPinFieldDelegate {
         } else {
             print("Success")
             field.animateSuccess(with: "👍") {
-                self.refreshPinField()
+                self.setupPinfield()
             }
             
         }
