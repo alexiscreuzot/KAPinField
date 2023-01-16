@@ -46,7 +46,7 @@ Don't forget to set the delegate likeso :
 
 override func viewDidLoad() {
         super.viewDidLoad()
-        pinField.properties.delegate = self
+        properties.delegate = self
         ...
 }
 ```
@@ -63,37 +63,43 @@ extension MyController : KAPinFieldDelegate {
 ### Properties
 All the logic properties are available in the `KAPinFieldProperties` struct named `properties`.
 
+** Token can't be a whitespace due to Apple handling of trailing spaces. You can achieve the same effect using any token with `tokenColor` and `tokenFocusColor` set to `.clear` **
+
 ##### Logic
 ```swift
-pinField.properties.token = "-" // Default to "•"
-pinField.properties.numberOfCharacters = 5 // Default to 4
-pinField.properties.validCharacters = "0123456789+#?" // Default to only numbers, "0123456789"
-pinField.properties.text = "123" // You can set part or all of the text
-pinField.properties.animateFocus = true // Animate the currently focused token
-pinField.properties.isSecure = false // Secure pinField will hide actual input
-pinField.properties.secureToken = "*" // Token used to hide actual character input when using isSecure = true
-pinField.properties.isUppercased = false // You can set this to convert input to uppercased.
+pinField.updateProperties { properties in
+  properties.token = "-" // Default to "•", can't be a whitespace !
+  properties.numberOfCharacters = 5 // Default to 4
+  properties.validCharacters = "0123456789+#?" // Default to only numbers, "0123456789"
+  properties.text = "123" // You can set part or all of the text
+  properties.animateFocus = true // Animate the currently focused token
+  properties.isSecure = false // Secure pinField will hide actual input
+  properties.secureToken = "*" // Token used to hide actual character input when using isSecure = true
+  properties.isUppercased = false // You can set this to convert input to uppercased.
+}
 ```
 
 ##### Styling
 All the styling can be done via the `KAPinFieldAppearance` struct named `appearance`.
 
 ```swift
-pinField.appearance.font = .menloBold(40) // Default to appearance.MonospacedFont.menlo(40)
-pinField.appearance.kerning = 20 // Space between characters, default to 16
-pinField.appearance.textColor = UIColor.white.withAlphaComponent(1.0) // Default to nib color or black if initialized programmatically.
-pinField.appearance.tokenColor = UIColor.black.withAlphaComponent(0.3) // token color, default to text color
-pinField.appearance.tokenFocusColor = UIColor.black.withAlphaComponent(0.3)  // token focus color, default to token color
-pinField.appearance.backOffset = 8 // Backviews spacing between each other
-pinField.appearance.backColor = UIColor.clear
-pinField.appearance.backBorderWidth = 1
-pinField.appearance.backBorderColor = UIColor.white.withAlphaComponent(0.2)
-pinField.appearance.backCornerRadius = 4
-pinField.appearance.backFocusColor = UIColor.clear
-pinField.appearance.backBorderFocusColor = UIColor.white.withAlphaComponent(0.8)
-pinField.appearance.backActiveColor = UIColor.clear
-pinField.appearance.backBorderActiveColor = UIColor.white
-pinField.appearance.keyboardType = UIKeyboardType.numberPad // Specify keyboard type
+pinField.updateAppearence { appearance in
+  appearance.font = .menloBold(40) // Default to appearance.MonospacedFont.menlo(40)
+  appearance.kerning = 20 // Space between characters, default to 16
+  appearance.textColor = UIColor.white.withAlphaComponent(1.0) // Default to nib color or black if initialized programmatically.
+  appearance.tokenColor = UIColor.black.withAlphaComponent(0.3) // token color, default to text color
+  appearance.tokenFocusColor = UIColor.black.withAlphaComponent(0.3)  // token focus color, default to token color
+  appearance.backOffset = 8 // Backviews spacing between each other
+  appearance.backColor = UIColor.clear
+  appearance.backBorderWidth = 1
+  appearance.backBorderColor = UIColor.white.withAlphaComponent(0.2)
+  appearance.backCornerRadius = 4
+  appearance.backFocusColor = UIColor.clear
+  appearance.backBorderFocusColor = UIColor.white.withAlphaComponent(0.8)
+  appearance.backActiveColor = UIColor.clear
+  appearance.backBorderActiveColor = UIColor.white
+  appearance.keyboardType = UIKeyboardType.numberPad // Specify keyboard type
+}
 ```
 
 ### Font
